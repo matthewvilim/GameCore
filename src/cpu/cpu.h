@@ -53,16 +53,16 @@
 typedef void (*instr_gen_t)(cpu_t *cpu);
 
 typedef union reg {
-    struct {
-        union {
-            struct {
+    uint32_t r32;
+    typedef struct {
+        typedef union {
+            uint16_t l16;
+            typedef struct {
                 uint8_t l8, h8;
             };
-            uint16_t reg16;
         };
-        uint16_t pad;
+        uint16_t h16;
     };
-    uint32_t reg32;
 } reg_t;
 
 typedef struct reg_file {
