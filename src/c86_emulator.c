@@ -1,40 +1,80 @@
-/********************************************************************************
- *
- * The MIT License (MIT)
- *
- * Core 8086
- * Copyright (c) 2014 Matthew Vilim
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
- *******************************************************************************/
+/**********************************************************************************
+ *                                                                                *
+ * The MIT License (MIT)                                                          *
+ *                                                                                *
+ * Core 8086                                                                      *
+ * Copyright (c) 2014 Matthew Vilim                                               *
+ *                                                                                *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy   *
+ * of this software and associated documentation files (the "Software"), to deal  *
+ * in the Software without restriction, including without limitation the rights   *
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell      *
+ * copies of the Software, and to permit persons to whom the Software is          *
+ * furnished to do so, subject to the following conditions:                       *
+ *                                                                                *
+ * The above copyright notice and this permission notice shall be included in all *
+ * copies or substantial portions of the Software.                                *
+ *                                                                                *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     *
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,       *
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE    *
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER         *
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  *
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  *
+ * SOFTWARE.                                                                      *
+ *                                                                                *
+ **********************************************************************************/
 
 #include <c86_emulator.h>
 
 typedef struct c86_emu {
-    c86_cpu_t cpu;
+    cpu_t cpu;
+    mem_t mem;
 } c86_emu_t;
 
-void c86_emu_init(c86_emu_t **emulator) {
-    *emulator = malloc(sizeof(c86_emu_t));
+c86_error_t
+c86_emu_init(c86_emu_t **emu) {
+    c86_error_t error;
+    if (!emu) {
+        error = C86_ARG_ERROR
+        goto error;
+    }
+    
+    c86_emu_t *emulator;
+    if (!emulator = malloc(sizeof(*emulator))) {
+        error = C86_MALLOC_ERROR;
+        goto error;
+    }
+    
+    if (error = cpu_init(emulator->cpu) ||
+        error = mem_init(emulator->mem)) {
+        c86_emu_term(emulator);
+        goto error;
+    }
+    
+    INFO("Emulator initialized!");
+    *emu = emulator;
+    return C86_NO_ERROR;
+    
+    error:
+    ERROR_DESC("Emulator initialization failed", error);
+    c86_emu_term(emulator);
+    return error;
 }
 
-void c86_emu_terminate(c86_emu_t *emu) {
+c86_error_t
+c86_emu_term(c86_emu_t *emu) {    
+    if (!emu) {
+        return C86_ARG_ERROR;
+    }
     
+    c86_error_t error;
+    if (error = cpu_term(emu->cpu) ||
+        error = mem_term(emu->mem)) {
+        return error;
+    }
+    
+    free(emu);
+    
+    return C86_NO_ERROR;
 }

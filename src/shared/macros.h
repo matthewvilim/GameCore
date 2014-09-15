@@ -54,4 +54,12 @@
 #define MASK_AND_VAL(in, mask, val)    (MASK_SET_VAL(0, mask, (val)) & (in))
 #define MASK_XOR_VAL(in, mask, val)    (MASK_SET_VAL(0, mask, (val)) ^ (in))
 
+/********************
+ * COMMON BIT MASKS *
+ ********************/
+
+#define MASK_LOW_B     MASK_RANGE(8, 0)
+#define MASK_HIGH_B    (MASK_LOW_B << 8)
+#define MASK_LOW_W     (MASK_LOW_B | MASK_HIGH_B)
+ 
 #endif

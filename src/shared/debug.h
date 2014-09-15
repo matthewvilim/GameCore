@@ -38,7 +38,7 @@
 
 #define LOG(msg, ...)                                         \
     do {                                                      \
-        printf("%s" msg "\n", LOG_PREFIX, msg, ##__VA_ARGS__) \
+        printf("%s" msg "\n", LOG_PREFIX, ##__VA_ARGS__) \
     } while(0);
 
 #define LOG_STDERR(level, msg, ...)                                                                                        \
@@ -49,6 +49,8 @@
 #define INFO(msg, ...)     LOG_STDERR("INFO", msg, ##__VA_ARGS__)
 #define WARN(msg, ...)     LOG_STDERR("WARN", msg, ##__VA_ARGS__)
 #define ERROR(msg, ...)    LOG_STDERR("ERROR", msg, ##__VA_ARGS__)
+
+#define ERROR_DESC(error, msg, ...)    ERROR("%s: " msg, error_desc[error], ##__VA_ARGS__)
 
 #if C86_DEBUG
 # define DBG_INFO(msg, ...)     INFO(msg, ...)

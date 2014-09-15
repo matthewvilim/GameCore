@@ -28,11 +28,15 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-#define MEM_ADDRESSABILITY_BYTES    1
+#define MEM_ADDRESSABILITY_BYTES     1
 #define MEM_SEGMENT_ADDRESS_SPACE    (1 << 16) // 64 KB
 #define MEM_MASK_SEGMENT_ADDRESS     (MEM_SEGMENT_ADDRESS_SPACE - 1)
-#define MEM_LINEAR_ADDRESS_SPACE      (1 << 20) // 1 MB
-#define MEM_MASK_LINEAR_ADDRESS       (MEM_LINEAR_ADDRESS_SPACE - 1)
+#define MEM_LINEAR_ADDRESS_SPACE     (1 << 20) // 1 MB
+#define MEM_MASK_LINEAR_ADDRESS      (MEM_LINEAR_ADDRESS_SPACE - 1)
+
+typedef uint8_t byte_t;
+typedef uint16_t word_t;
+typedef uint32_t long_t;
 
 typedef uint16_t seg_addr_t; // internal address bus is 16 bits
 typedef uint32_t linear_addr_t; // external address bus is 20 bits

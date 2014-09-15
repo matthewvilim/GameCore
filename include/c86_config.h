@@ -40,9 +40,10 @@
 #endif
 
 #if __has_attribute(always_inline)
-#define C86_ALWAYS_INLINE __attribute__((always_inline))
+# define C86_INLINE static inline __attribute__((always_inline))
 #else
-#define C86_ALWAYS_INLINE
+# warn functions will not be force inlined
+# define C86_INLINE static inline
 #endif
 
 #endif

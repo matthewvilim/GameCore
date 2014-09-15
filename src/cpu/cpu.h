@@ -30,7 +30,8 @@
 #ifndef CPU_H
 #define CPU_H
 
-// NOTE: C bitfields do NOT guarantee ordering and should be avoided when mapping to HW registers
+// NOTE: Bitfields/unions in C do NOT guarantee ordering, alignment, or endianess and should be avoided
+// when mapping to emulated HW registers, so for portability, we use bit mask macros only.
 
 /******************
  * REGISTER MASKS *
@@ -50,39 +51,95 @@
 #define FLAG_MASK_OVERFLOW            (0x1 << 11)
 #define FLAG_MASK_RESERVED12_15       (0xF << 12)
 
-typedef void (*instr_gen_t)(cpu_t *cpu);
-
-typedef union reg {
-    uint32_t r32;
-    typedef struct {
-        typedef union {
-            uint16_t l16;
-            typedef struct {
-                uint8_t l8, h8;
-            };
-        };
-        uint16_t h16;
-    };
+typedef enum reg {
+    
 } reg_t;
 
+typedef enum gen_idx {
+    GEN_IDX_EAX_AX_AL = 0,
+    GEN_IDX_ECX_CX_CL = 1,
+    GEN_IDX_EDX_DX_DL = 2,
+    GEN_IDX_EBX_BX_BL = 3,
+    GEN_IDX_ESP_SP_AH = 4,
+    GEN_IDX_EBP_BP_CH = 5,
+    GEN_IDX_ESI_SI_DH = 6,
+    GEN_IDX_EDI_DI_BH = 7,
+    GEN_IDX_LAST
+} gen_idx_t;
+
+typedef enum reg_seg_idx {
+    SEG_IDX_CS,
+    SEG_IDX_DS,
+    SEG_IDX_ES,
+    SEG_IDX_FS,
+    SEG_IDX_GS,
+    SEG_IDX_LAST
+} seg_idx_t;
+
+typedef void (*instr_gen_t)(cpu_t *cpu);
+
 typedef struct reg_file {
-    // general purpose
-    reg_t gen[8];
+    // general purpose registers
+    long_t gen[8];
+    // segment registers
+    word_t seg[REG_SEG_LAST];
     // instruction pointer
-    uint16_t ip;
-    // segment
-    uint16_t cs;
-    uint16_t ds;
-    uint16_t es;
-    uint16_t ss;
+    long_t eip;
     // flags
-    uint16_t flags;
+    long_t eflags;
 } reg_file_t;
 
+typedef struct instr {
+    
+} instr_t;
+
 typedef struct cpu {
+    bool protected_mode;
     reg_file_t reg_file;
     
     instr_gen_t instr_gen;
 } cpu_t;
+
+C86_INLINE void
+reg_gen_write_b(reg_file_t *reg_file, reg_gen_idx_t idx, byte_t val) {
+    reg_gen_t *reg = cpu->reg_file.gen + (idx & ~0x4);
+    idx >= 0x4 ? reg->h8 = val : reg->l8 = val;
+}
+
+C86_INLINE byte_t
+reg_gen_read_b(reg_file_t *reg_file, reg_gen_idx_t idx) {
+    reg_gen_t *reg = reg_file->gen + (idx & ~0x4);
+    return idx >= 0x4 ? reg->h8 : reg->l8;
+}
+
+C86_INLINE void
+reg_gen_write_w(reg_file_t *reg_file, reg_gen_idx_t idx, word_t val) {
+    reg_file->gen[idx & ~0x4].l16 = val;
+}
+
+C86_INLINE word_t
+reg_gen_read_w(reg_file_t *reg_file, reg_gen_idx_t idx) {
+    return reg_file->gen[idx & ~0x4].l16;
+}
+
+C86_INLINE void
+reg_gen_write_l(reg_file_t *reg_file, reg_gen_idx_t idx, long_t val) {
+    reg_file->gen[idx & ~0x4].r32 = val;
+}
+
+C86_INLINE long_t
+reg_gen_read_l(reg_file_t *reg_file, reg_gen_idx_t idx) {
+    return reg_file->gen[idx & ~0x4].r32;
+}
+
+C86_INLINE void
+reg_seg_write(reg_file_t *reg_file, reg_seg_idx_t idx, word_t val) {
+    reg_file->seg[idx] = val;
+}
+
+C86_INLINE word_t
+reg_seg_read(reg_file_t *reg_file, reg_seg_idx_t idx) {
+    return reg_file->seg[idx];
+}
 
 #endif

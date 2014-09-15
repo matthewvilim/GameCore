@@ -29,17 +29,65 @@
 
 #include "instructions.h"
 
-static void _gen_static(cpu_t *cpu);
+static void _instr_gen_static(cpu_t *cpu);
 
-void init_instr_gen_static(cpu_t *cpu) {
-    cpu->instr_gen = _gen_static;
+c86_error_t
+instr_gen_static_init(cpu_t *cpu) {
+    if (!cpu) {
+        return C86_ARG_ERROR;
+    }
+    cpu->instr_gen = _instr_gen_static;
+    
+    return C86_NO_ERROR
 }
+
+C86_INLINE linear_addr_t
+_real_addr_calc(op_info_t *op_info, reg_file_t *reg_file) {
+    linear_addr_t effective_addr;
+    switch (rm) {
+        case INSTR_RM_BX+SI:
+            effective_addr = reg_file->bx + reg_file->si; break;
+        case INSTR_RM_BX+DI:
+            effective_addr = reg_file->bx + reg_file->di; break;
+        case INSTR_RM_BP+SI:
+            effective_addr = reg_file->bp + reg_file->si; break;
+        case INSTR_RM_BP+DI:
+            effective_addr = reg_file->bp + reg_file->di; break;
+        case INSTR_RM_SI:
+            effective_addr = reg_file->si; break;
+        case INSTR_RM_DI:
+            effective_addr = reg_file->di; break;
+        case INSTR_RM_BP_OR_DIR_ADDR:
+            effective_addr = reg_file->bp; break;
+        case INSTR_RM_BX:
+            effective_addr = reg_file->bx; break;
+        default: break; // TODO: handle error
+    }
+    switch (mod) {
+        case INSTR_MOD_NO_DISP:
+            // override address calculated above
+            if (rm == INSTR_RM_BP_OR_DIR_ADDR) {
+                effective_addr = ((uint16_t *)instr)[1];
+            }
+            break;
+        case INSTR_MOD_B_DISP:
+            effective_addr += instr[2]; break;
+        case INSTR_MOD_W_DISP:
+            effective_addr += ((uint16_t *)instr)[1]; break;
+        case INSTR_MOD_REG:
+        default: break; // TODO: handle error
+    }
+    return effective_addr;
+}
+
+C86_INLINE linear_addr_t
+_protected_addr_calc
 
 // Most modern architectures use barrel shifters instead of serial shifters, yielding O(1) shift time.
 // So, for convenience, it's fine to shift register fields instead of reading them in place.
 // Since not all instructions' reg, mod, r/m, etc. fields are at the same index, each instruction's implementation function
 // will pass the decoded values here directly.
-static inline linear_addr_t _calc_effective_addr(op_info_t *op_info, reg_file_t *reg_file) C86_INLINE {
+static inline linear_addr_t _calc_effective_addr(op_info_t *op_info, reg_file_t *reg_file) {
     linear_addr_t effective_addr;
     switch (rm) {
         case INSTR_RM_BX+SI:

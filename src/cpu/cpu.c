@@ -27,4 +27,13 @@
 
 #include "cpu.h"
 
-void 
+c86_error_t
+cpu_init(cpu_t *cpu) {
+    if (!cpu) {
+        return C86_ARG_ERROR;
+    }
+    // x86 maintains backwards compatibility by starting in real mode
+    cpu->protected_mode = false;
+    
+    return C86_NO_ERROR
+}
