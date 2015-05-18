@@ -1,39 +1,34 @@
-/**********************************************************************************
- *                                                                                *
- * The MIT License (MIT)                                                          *
- *                                                                                *
- * Core 8086                                                                      *
- * Copyright (c) 2014 Matthew Vilim                                               *
- *                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy   *
- * of this software and associated documentation files (the "Software"), to deal  *
- * in the Software without restriction, including without limitation the rights   *
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell      *
- * copies of the Software, and to permit persons to whom the Software is          *
- * furnished to do so, subject to the following conditions:                       *
- *                                                                                *
- * The above copyright notice and this permission notice shall be included in all *
- * copies or substantial portions of the Software.                                *
- *                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     *
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,       *
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE    *
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER         *
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  *
- * SOFTWARE.                                                                      *
- *                                                                                *
- **********************************************************************************/
+/*
+ * Game Core Copyright (C) 2014 Matthew Vilim
+ *
+ * src/cpu/cpu.c
+ */
 
 #include "cpu.h"
+vtable_t vtable_real {
+    .decode = _
+};
 
-c86_error_t
+vtable_t vtable_protected {
+    
+};
+gc_error_t
 cpu_init(cpu_t *cpu) {
     if (!cpu) {
-        return C86_ARG_ERROR;
+        return GC_ARG_ERROR;
     }
     // x86 maintains backwards compatibility by starting in real mode
     cpu->protected_mode = false;
     
-    return C86_NO_ERROR
+    return GC_NO_ERROR
+}
+
+gc_error_t
+_real_init(cpu_t *cpu) {
+    cpu->
+}
+
+gc_error_t
+_protected_init(cpu_t *cpu) {
+    cpu->
 }

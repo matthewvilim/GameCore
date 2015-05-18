@@ -1,60 +1,77 @@
-/**********************************************************************************
- *                                                                                *
- * The MIT License (MIT)                                                          *
- *                                                                                *
- * Core 8086                                                                      *
- * Copyright (c) 2014 Matthew Vilim                                               *
- *                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy   *
- * of this software and associated documentation files (the "Software"), to deal  *
- * in the Software without restriction, including without limitation the rights   *
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell      *
- * copies of the Software, and to permit persons to whom the Software is          *
- * furnished to do so, subject to the following conditions:                       *
- *                                                                                *
- * The above copyright notice and this permission notice shall be included in all *
- * copies or substantial portions of the Software.                                *
- *                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     *
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,       *
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE    *
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER         *
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  *
- * SOFTWARE.                                                                      *
- *                                                                                *
- **********************************************************************************/
+/*
+ * Core 8086 Copyright (C) 2014 Matthew Vilim
+ *
+ * src/shared/macros.h
+ */
 
-#define REG_EAX 0
-#define REG_
+/******************
+ * REGISTER MASKS *
+ ******************/
+
+#define EFLAG_MASK_CF      BIT(0)
+#define EFLAG_MASK_RES0    BIT(1)
+#define EFLAG_MASK_PF      BIT(2)
+#define EFLAG_MASK_RES1    BIT(3)
+#define EFLAG_MASK_AF      BIT(4)
+#define EFLAG_MASK_RES2    BIT(5)
+#define EFLAG_MASK_ZF      BIT(6)
+#define EFLAG_MASK_SF      BIT(7)
+#define EFLAG_MASK_TF      BIT(8)
+#define EFLAG_MASK_IF      BIT(9)
+#define EFLAG_MASK_DF      BIT(10)
+#define EEFLAG_MASK_OF     BIT(11)
+#define EFLAG_MASK_IOPL    MASK_RANGE(13, 12)
+#define EFLAG_MASK_NT      BIT(14)
+#define EFLAG_MASK_RES3    BIT(15)
+#define EFLAG_MASK_RF      BIT(16)
+#define EFLAG_MASK_VM      BIT(17)
+#define EFLAG_MASK_AC      BIT(18)
+#define EFLAG_MASK_RES4    MASK_RANGE(31, 19)
 
 /*********************
  * INSTRUCTION MASKS *
  *********************/
 
-#define INSTR_B1_W_0_MASK        MASK_RANGE(0, 0)
-#define INSTR_B1_W_3_MASK        MASK_RANGE(3, 3)
-#define INSTR_B1_D_MASK          MASK_RANGE(1, 1)
-#define INSTR_B1_REG_2_0_MASK    MASK_RANGE(2, 0)
-#define INSTR_B1_S_MASK          MASK_RANGE(1, 1)
-#define INSTR_B2_MOD_7_6_MASK    MASK_RANGE(7, 6)
-#define INSTR_B2_REG_5_3_MASK    MASK_RANGE(5, 3)
-#define INSTR_B2_RM_2_0_MASK     MASK_RANGE(2, 0)
-#define INSTR_B2_SR_3_2_MASK     MASK_RANGE(3, 2)
+#define INSTR_OPCODE_W_0_MASK    BIT(0)
+#define INSTR_OPCODE_W_3_MASK    BIT(3)
+#define INSTR_OPCODE_D_MASK      BIT(1)
+#define INSTR_OPCODE_REG_MASK    MASK_RANGE(2, 0)
+#define INSTR_OPCODE_S_MASK      BIT(1)
+#define INSTR_MODRM_MOD_MASK     MASK_RANGE(7, 6)
+#define INSTR_MODRM_REG_MASK     MASK_RANGE(5, 3)
+#define INSTR_MODRM_RM_MASK      MASK_RANGE(2, 0)
 
 /****************************
  * INSTRUCTION FIELD VALUES *
  ****************************/
+// 32 bit registers
+#define INSTR_REG_EAX 0x0
+#define INSTR_REG_ECX 0x1
+#define INSTR_REG_EDX 0x2
+#define INSTR_REG_EBX 0x3
+#define INSTR_REG_ESP 0x4
+#define INSTR_REG_EBP 0x5
+#define INSTR_REG_ESI 0x6
+#define INSTR_REG_EDI 0x7
+// 16 bit registers
+#define INSTR_REG_AX 0x0
+#define INSTR_REG_CX 0x1
+#define INSTR_REG_DX 0x2
+#define INSTR_REG_BX 0x3
+#define INSTR_REG_SP 0x4
+#define INSTR_REG_BP 0x5
+#define INSTR_REG_SI 0x6
+#define INSTR_REG_DI 0x7
+// 8 bit registers
+#define INSTR_REG_AL 0x0
+#define INSTR_REG_CL 0x1
+#define INSTR_REG_DL 0x2
+#define INSTR_REG_BL 0x3
+#define INSTR_REG_AH 0x4
+#define INSTR_REG_CH 0x5
+#define INSTR_REG_DH 0x6
+#define INSTR_REG_BH 0x7
 
-// REG - Register
-#define INSTR_REG_AX_AL    0x0
-#define INSTR_REG_CX_CL    0x1
-#define INSTR_REG_DX_DL    0x2
-#define INSTR_REG_BX_BL    0x3
-#define INSTR_REG_AH_SP    0x4
-#define INSTR_REG_CH_BP    0x5
-#define INSTR_REG_DH_SI    0x6
-#define INSTR_REG_BH_DI    0x7
 // MOD - Mode
 #define INSTR_MOD_NO_DISP    0x0
 #define INSTR_MOD_B_DISP     0x1
@@ -129,173 +146,37 @@ typedef enum {
     OPERANT_W = 1 << 7
 } operant_t;
 
-typedef struct opcode {
+typedef struct op_group {
     char *name;
+} op_group_t;
+
+typedef struct op_info {
+    opcode_group_t group;
     addressing_t addressing;
     operant_t operant;
-    uint8_t size;
     bool dynarec;
-} opcode_t;
+} op_info_t;
 
-/**************
- * OPCODE MAP *
- **************/
+typedef enum operand_type {
+    OPERAND_REG,
+    OPERAND_ADDR
+} operand_type_t;
 
-/*                                   One-byte Opcode Map (0x00 - 0xF7)
- *         0          1          2          3          4          5          6          7
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               ADD                               |          |          |
- * 0 +          +          +          +          +          +          + PUSH ES  +  POP ES  +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               ADC                               |          |          |
- * 1 +          +          +          +          +          +          +  PUSH SS +  POP SS  +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               AND                               |          |          |
- * 2 +          +          +          +          +          +          + SEG = ES +   DAA    +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  | (Prefix) |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               XOR                               |          |          |
- * 3 +          +          +          +          +          +          + SEG = SS +   AAA    +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  | (Prefix) |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                                 INC general register                                  |
- * 4 +          +          +          +          +          +          +          +          +
- *   |    eAX   |    eCX   |   eDX    |    eBX   |    eSP   |   eBP    |    eSI   |   eDI    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                                 PUSH general register                                 |
- * 5 +          +          +          +          +          +          +          +          +
- *   |    eAX   |    eCX   |   eDX    |    eBX   |    eSP   |   eBP    |    eSI   |   eDI    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |  PUSHA/  |   POPA/  |   BOUND  |   ARPL   |          |          |  Operand |  Address |
- * 6 +  PUSHAD  +   POPAD  +          +          + SE G= FS + SEG = GS +   Size   +   Size   +
- *   |          |          |  Gv, Ma  |  Ew, Gw  | (Prefix) | (Prefix) | (Prefix) | (Prefix) |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                      Jcc  - Short-displacement jump on condition                      |
- * 7 +     O    +    NO    +  B/NAE/C + NB/AE/NC +    Z/E   +   NZ/NE  +   BE/NA  +   NBE/A  +
- *   |    Jb    |    Jb    |    Jb    |    Jb    |    Jb    |    Jb    |    Jb    |    Jb    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |              Immediate Grp 1              |         TEST        |         XCHG        |
- * 8 +          +          +          +          +          +          +          +          +
- *   |  Eb, Ib  |  Ev, Iz  |  Eb, Ib  |  Ev, Ib  |  Eb, Gb  |  Ev, Gv  |  Eb, Gb  |  Ev, Gv  |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |          |                  XCHG word, double-word register with eAX                  |
- * 9 +    NOP   +          +          +          +          +          +          +          +
- *   |          |    eCX   |    eDX   |    eBX   |    eSP   |    eBP   |    eSI   |    eDI   |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                    MOV                    |  MOVS/B  | MOVS/W/D |  CMPS/B  | CMPS/W/D |
- * A +          +          +          +          +          +          +          +          +
- *   |  AL, Ob  |  eAX, Ov |  Ob, AL  |  Ov, eAX |  Yb, Xb  |  Yv, Xv  |  Xb, Yb  |  Xv, Yv  |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                         MOV immediate byte into byte register                         |
- * B +          +          +          +          +          +          +          +          +
- *   |    AL    |    CL    |    DL    |    BL    |    AH    |    CH    |    DH    |    BH    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |     Shift Grp 2     |       near RET      |    LES   |    LDS   |     Grp 11 - MOV    |
- * C +          +          +          +          +          +          +          +          +
- *   |          |          |    Iw    |          |  Gz, Mp  |  Gz, Mp  |  Eb, Ib  |  Ev, Iz  |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                Shift Grp 2                |    AAM   |    AAD   |          |   XLAT/  |
- * D +          +          +          +          +          +          +          +   XLATB  +
- *   |   Eb, 1  |   Ev, 1  |  Eb, CL  |  Ev, CL  |    Ib    |    Ib    |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |  LOOPNE/ |  LOOPE/  |   LOOP   |   JeCXZ  |          IN         |         OUT         |
- * E +  LOOPNZ  +  LOOPZ   +          +          +          +          +          +          +
- *   |    Jb    |    Jb    |    Jb    |    Jb    |  AL, Ib  | eAX, Ib  |  Ib, AL  |  Ib, eAX |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |          |          |          |   REP/   |          |          |     Unary Grp 3     |
- * F +   LOCK   +          +  REPNE   +   REPE   +    HLT   +    CMC   +          +          +
- *   | (Prefix) |          |          | (Prefix) |          |          |    Eb    |    Ev    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- */
+typedef enum dir {
+    DIR_REG_TO_RM,
+    DIR_RM_TO_REG
+} dir_t;
 
-/*                                   One-byte Opcode Map (0x08 - 0xFF)
- *         8          9          A          B          C          D          E          F
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                                OR                               |          |  2-byte  |
- * 0 +          +          +          +          +          +          + PUSH CS  +  escape  +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               SBB                               |          |          |
- * 1 +          +          +          +          +          +          + PUSH DS  +  POP DS  +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               SUB                               |          |          |
- * 2 +          +          +          +          +          +          + SEG = CS +   DAS    +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  | (Prefix) |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               CMP                               |          |          |
- * 3 +          +          +          +          +          +          + SEG = DS +   AAS    +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  AL, Ib  | eAX, Iz  | (Prefix) |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                                  DEC general register                                 |
- * 4 +          +          +          +          +          +          +          +          +
- *   |    eAX   |   eCX    |    eDX   |   eBX    |   eSP    |   eBP    |   eSI    |   eDI    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                               POP into general register                               |
- * 5 +          +          +          +          +          +          +          +          +
- *   |    eAX   |   eCX    |    eDX   |   eBX    |    eSP   |   eBP    |   eSI    |   eDI    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |   PUSH   |  IMUL    |   PUSH   |   IMUL   |   INS/   | INS/W/D  |  OUTS/B  | OUTS/W,D |
- * 6 +          + Gv, Ev,  +          +  Gv, Ev, +   INSB   +          +          +          +
- *   |    Iz    |   Iz     |    Ib    |    Ib    |  Yb, DX  |  Yz, DX  |  DX, Xb  |  DX, Xz  |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                       Jcc - Short-displacement jump on condition                      |
- * 7 +     S    +     NS   +    P/PE  +  NP/PO   +   L/NGE  +   NL/GE  +  LE/NG   +  NLE/G   +
- *   |    Jb    |    Jb    |    Jb    |   Jb     |    Jb    |    Jb    |    Jb    |    Jb    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                    MOV                    |    MOV   |    LEA   |    MOV   |  Grp 1A  |
- * 8 +          +          +          +          +          +          +          +    POP   +
- *   |  Eb, Gb  |  Ev, Gv  |  Gb, Eb  |  Gv, Ev  |  Ev, Sw  |   Gv, M  |  Sw, Ew  |    Ev    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |   CBW/   |   CWD/   | far CALL |  FWAIT/  |  PUSHF/D |  POPF/D  |   SAHF   |   LAHF   |
- * 9 +   CWDE/  +   CDQ/   +          +   WAIT   +          +          +          +          +
- *   |   CDQE   |   CQO    |    Ap    |          |    Fv    |    Fv    |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |        TEST         |  STOS/B  | STOS/W/D |  LODS/B  | LODS/W/D |  SCAS/B  | SCAS/W/D |
- * A +          +          +          +          +          +          +          +          +
- *   |  AL, Ib  | eAX, Iz  |  Yb, AL  | Yv, eAX  |  AL, Xb  | eAX, Xv  |  AL, Yb  | eAX, Yv  |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |               MOV immediate word or double into word or double register               |
- * B +          +          +          +          +          +          +          +          +
- *   |    eAX   |   eCX    |   eDX    |   eBX    |    eSP   |    eBP   |    eSI   |   eDI    |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |   ENTER  |          |       far RET       |          |   INT    |          |          |
- * C +          +  LEAVE   +          +          +  INT 3   +          +   INTO   +  IRET/D  +
- *   |  Iw, Ib  |          |    Iw    |          |          |    Ib    |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |                      ESC (Escape to coprocessor instruction set)                      |
- * D +          +          +          +          +          +          +          +          +
- *   |          |          |          |          |          |          |          |          |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |   near   |              JMP               |          IN         |         OUT         |
- * E +   CALL   +          +          +          +          +          +          +          +
- *   |    Jz    |    Jz    |    Ap    |    Jb    |  AL, DX  | eAX, DX  |  DX, AL  | DX, eAX  |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- *   |          |          |          |          |          |          |       INC/DEC       |
- * F +   CLC    +   STC    +   CLI    +    STI   +   CLD    +   STD    +          +          +
- *   |          |          |          |          |          |          |  Grp 4   |   Grp 5  |
- *   +----------+----------+----------+----------+----------+----------+----------+----------+
- */
- 
-static const op_info_t mov_reg_mem_to_from_reg = {
-    .opcode = OPCODE_ADD_REG_MEM,
-    .size_min = 3,
-    .mod_mask = INSTR_B2_MOD_7_6_MASK,
-    .reg_mask = INSTR_B2_REG_5_3_MASK,
-    .rm_mask = INSTR_B2_RM_2_0_MASK
-}
+typedef struct {
+    operand_type_t type;
+    union {
+        const reg_gen_t *reg;
+        dword_t addr;
+    };
+} operand_t;
 
-static const op_info_t add_reg_mem_with_reg_to_either = { .opcode = OPCODE_ADD_REG_MEM, .size = 3, .mod_mask = INSTR_B2_MOD_7_6_MASK,
-                                                          .reg_mask = INSTR_B2_REG_5_3_MASK, .rm_mask = INSTR_B2_RM_2_0_MASK }
-
-static const op_info_t op_table[] = {
-    add_reg_mem_with_reg_to_either, // 0x00
-    add_reg_mem_with_reg_to_either, // 0x01
-    add_reg_mem_with_reg_to_either, // 0x10
-    add_reg_mem_with_reg_to_either, // 0x11
-    
-}
+extern const reg_gen_idx modrm_byte[];
+extern const reg_gen_idx modrm_word[];
+extern const reg_gen_idx modrm_dword[];
 
 #endif

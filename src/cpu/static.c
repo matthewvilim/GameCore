@@ -1,29 +1,8 @@
-/**********************************************************************************
- *                                                                                *
- * The MIT License (MIT)                                                          *
- *                                                                                *
- * Core 8086                                                                      *
- * Copyright (c) 2014 Matthew Vilim                                               *
- *                                                                                *
- * Permission is hereby granted, free of charge, to any person obtaining a copy   *
- * of this software and associated documentation files (the "Software"), to deal  *
- * in the Software without restriction, including without limitation the rights   *
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell      *
- * copies of the Software, and to permit persons to whom the Software is          *
- * furnished to do so, subject to the following conditions:                       *
- *                                                                                *
- * The above copyright notice and this permission notice shall be included in all *
- * copies or substantial portions of the Software.                                *
- *                                                                                *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR     *
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,       *
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE    *
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER         *
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  *
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE  *
- * SOFTWARE.                                                                      *
- *                                                                                *
- **********************************************************************************/
+/*
+ * Core 8086 Copyright (C) 2014 Matthew Vilim
+ *
+ * src/shared/macros.h
+ */
 
 #include "instr_gen_static.h"
 
@@ -31,20 +10,113 @@
 
 static void _instr_gen_static(cpu_t *cpu);
 
-c86_error_t
+extern const vtable_t vtable_real = {
+    .decode = _decode
+}
+
+extern const vtable_t vtable_protected = {
+    
+}
+
+gc_error_t
 instr_gen_static_init(cpu_t *cpu) {
     if (!cpu) {
-        return C86_ARG_ERROR;
+        return GC_ARG_ERROR;
     }
     cpu->instr_gen = _instr_gen_static;
     
-    return C86_NO_ERROR
+    return GC_NO_ERROR
 }
 
-C86_INLINE linear_addr_t
-_real_addr_calc(op_info_t *op_info, reg_file_t *reg_file) {
-    linear_addr_t effective_addr;
-    switch (rm) {
+GC_INLINE gc_error_t
+_decode(cpu_t *cpu, mem_t *mem) {
+    long_t eip = cpu->reg_file.eip;
+    byte_t opcode = mem_read_b(mem, eip);
+    op_info_t *info = &op_table[opcode];
+    
+    // determine operant size
+    _decode_operant_size(cpu);
+    
+    // decode addressing support
+    for (addressing_t addr = info->addressing, i; addr; addr &= ~i) {
+        i = LOW_BIT(info->addressing)
+        switch (i) {
+            case ADDRESSING_E:
+                _decode_modrm(cpu);
+            case ADDRESSING_G:
+        }
+    }
+    return GC_NO_ERROR
+}
+
+GC_INLINE gc_error_t
+_decode_operant_size(cpu_t *cpu) {
+    
+}
+
+GC_INLINE gc_error_t
+_decode_modrm(cpu_t *cpu, byte_t *modrm, operand_size_t size, dword_t *addr) {
+    uint8_t mod = MASK_GET_VAL(*modrm, INSTR_MODRM_MOD_MASK);
+    switch (mod) {
+        case INSTR_MOD_REG:
+            uint8_t rm = MASK_GET_VAL(*modrm, INSTR_MODRM_RM_MASK);
+            
+            dword_t mask;
+            uint8_t reg;
+            
+            switch (size) {
+                case OPERAND_SIZE_BYTE:
+                    mask = rm & 0x4 ? MASK_HIGH_B : MASK_LOW_B;
+                    reg = rm & ~0x4;
+                    break;
+                case OPERAND_SIZE_WORD:
+                    mask = MASK_LOW_W;
+                    reg = rm;
+                    break;
+                case OPERAND_SIZE_DWORD:
+                    mask = MASK_DWORD;
+                    reg = rm;
+                    break;
+                default: break;
+            }
+            break;
+    }
+    
+    if (cpu_vm(cpu)) {
+        switch (mod) {
+            case INSTR_MOD_NO_DISP:
+                switch (rm) {
+                    case 0x0:
+                        break;
+                    case 0x1:
+                        break;
+                    case 0x2:
+                        break;
+                    case 0x3:
+                        break;
+                    case 0x4:
+                        break;
+                    case 0x5:
+                        break;
+                    case 0x6:
+                        break;
+                    case 0x7:
+                        break;
+                }
+                break;
+            default:
+        }
+    } else {
+        
+    }
+}
+
+GC_INLINE void
+_modrm_decode_real(byte_t modrm, instr_t *instr, reg_file_t *reg_file) {
+
+    
+    
+    
         case INSTR_RM_BX+SI:
             effective_addr = reg_file->bx + reg_file->si; break;
         case INSTR_RM_BX+DI:
@@ -77,10 +149,10 @@ _real_addr_calc(op_info_t *op_info, reg_file_t *reg_file) {
         case INSTR_MOD_REG:
         default: break; // TODO: handle error
     }
-    return effective_addr;
+    return GC_NO_ERROR;
 }
 
-C86_INLINE linear_addr_t
+GC_INLINE linear_addr_t
 _protected_addr_calc
 
 // Most modern architectures use barrel shifters instead of serial shifters, yielding O(1) shift time.
