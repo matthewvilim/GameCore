@@ -11,7 +11,7 @@
 
 typedef struct gc_emu gc_emu_t;
 
-void gc_emu_init(c86_emu_t **emu);
-void gc_emu_terminate(c86_emu_t *emu);
+void gc_emu_init(gc_emu_t **emu);
+void gc_emu_terminate(gc_emu_t *emu);
 
 #endif

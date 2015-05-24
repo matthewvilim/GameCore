@@ -4,35 +4,52 @@
  * src/shared/macros.h
  */
 
-#include "instr_gen_static.h"
+#include "static.h"
 
 #include "instructions.h"
 
-static void _instr_gen_static(cpu_t *cpu);
-
-extern const vtable_t vtable_real = {
-    .decode = _decode
-}
-
-extern const vtable_t vtable_protected = {
-    
-}
-
 gc_error_t
 instr_gen_static_init(cpu_t *cpu) {
-    if (!cpu) {
-        return GC_ARG_ERROR;
-    }
+    if (!cpu) return GC_ARG_ERROR;
+    
     cpu->instr_gen = _instr_gen_static;
     
     return GC_NO_ERROR
 }
 
+GC_INLINE uint8_t
+_decode_prefix(decode_t *decode, byte_t *instr) {
+    for (uint8_t count = 0; ; instr++, count++) {        
+        switch (*instr) {
+            case PREFIX_INSTR_REP:
+            case PREFIX_INSTR_REPE_REPZ:
+            case PREFIX_INSTR_REPNE_REPNZ:
+            case PREFIX_INSTR_LOCK:
+                decode->prefix_instr = *instr;
+                break;
+            case PREFIX_ADDR_SIZE:
+                decode->prefix_addr_size = true;
+                break;
+            case PREFIX_OPERAND_SIZE:
+                decode->prefix_operand_size = true;
+                break;
+            default:
+                return count;
+                break;
+        }
+    }
+}
+
 GC_INLINE gc_error_t
 _decode(cpu_t *cpu, mem_t *mem) {
     long_t eip = cpu->reg_file.eip;
+    
+    byte_t *instr = READ_MEM(eip);
+    
     byte_t opcode = mem_read_b(mem, eip);
     op_info_t *info = &op_table[opcode];
+    
+    _decode_prefix(cpu->decode, scan)
     
     // determine operant size
     _decode_operant_size(cpu);
@@ -47,11 +64,6 @@ _decode(cpu_t *cpu, mem_t *mem) {
         }
     }
     return GC_NO_ERROR
-}
-
-GC_INLINE gc_error_t
-_decode_operant_size(cpu_t *cpu) {
-    
 }
 
 GC_INLINE gc_error_t

@@ -1,5 +1,5 @@
 /*
- * Core 8086 Copyright (C) 2014 Matthew Vilim
+ * GameCore Copyright (C) 2014 Matthew Vilim
  *
  * src/shared/macros.h
  */
@@ -13,32 +13,41 @@
 #define MEM_LINEAR_ADDRESS_SPACE     (1 << 20) // 1 MB
 #define MEM_MASK_LINEAR_ADDRESS      (MEM_LINEAR_ADDRESS_SPACE - 1)
 
-typedef uint8_t byte_t;
-typedef uint16_t word_t;
-typedef uint32_t dword_t;
+// 8086 uses a 20 bit address bus
+typedef uint32_t lin_addr_t;
 
 typedef struct {
-    uint8_t *base;
+    void *base;
 } mem_t;
 
-static inline uint8_t mem_read_b(mem_t *mem, dword_t addr) {
-    return *(mem->base + addr);
+GC_INLINE void *
+mem_host_addr_calc(mem_t *mem, lin_addr_t lin_addr) {
+    return (byte_t *)mem->base + lin_addr;
 }
 
-static inline uint16_t mem_read_w(mem_t *mem, dword_t addr) {
-    return *(uint16_t *)(base + addr);
+GC_INLINE byte_t
+mem_readb(mem_t *mem, lin_addr_t addr) {
+    return *(byte *)mem_host_addr_calc(mem, addr);
 }
 
-static inline void mem_write_b(mem_t *mem, dword_t addr, uint8_t val) {
-    return *(base + addr) = val;
+GC_INLINE word_t
+mem_readw(mem_t *mem, lin_addr_t addr) {
+    return *(word_t *)mem_host_addr_calc(mem, addr);
 }
 
-static inline void mem_write_w(mem_t *mem, dword_t addr, uint16_t val) {
-    *(uint16_t *)(base + addr) = val;
+GC_INLINE void
+mem_writeb(mem_t *mem, lin_addr_t addr, byte_t val) {
+    *(byte_t *)mem_host_addr_calc(mem, addr)) = val;
 }
 
-static inline linear_addr_t mem_calc_linear_addr(seg_addr_t base, seg_addr_t offset) C86_INLINE {
-    return ((((linear_addr_t)base) << 4) + offset) & MEM_MASK_PHYS_ADDRESS;
+GC_INLINE void
+mem_writew(mem_t *mem, lin_addr_t addr, word_t val) {
+    *(word_t *)mem_host_addr_calc(mem, addr) = val;
+}
+
+GC_INLINE lin_addr_t
+mem_lin_addr_calc(word_t base, word_t offset) {
+    return ((((lin_addr_t)base) << 4) + offset) & MEM_MASK_PHYS_ADDRESS;
 }
 
 #endif

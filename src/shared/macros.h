@@ -38,8 +38,7 @@
  ********************/
 
 #define MASK_LOW_B     MASK_RANGE(8, 0)
-#define MASK_HIGH_B    (MASK_LOW_B << 8)
-#define MASK_LOW_W     (MASK_LOW_B | MASK_HIGH_B)
-#define MASK_DWORD     ((MASK_LOW_W << 16) | MASK_LOW_W)
+#define MASK_HIGH_B   (MASK_LOW_B << 8)
+#define MASK_W        (MASK_LOW_B | MASK_HIGH_B)
 
 #endif
