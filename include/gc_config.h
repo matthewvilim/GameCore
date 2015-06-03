@@ -10,10 +10,6 @@
 // native architecture endianness
 #ifdef __BIG_ENDIAN__
 # define GC_ARCH_NATIVE_BIG_ENDIAN     __BIG_ENDIAN__
-# define GC_ARCH_NATIVE_LITTLE_ENDIAN !__BIG_ENDIAN__
-#elif defined __LITTLE_ENDIAN__
-# define GC_ARCH_NATIVE_LITTLE_ENDIAN  __LITTLE_ENDIAN__
-# define GC_ARCH_NATIVE_BIG_ENDIAN    !__LITTLE_ENDIAN__
 #else
 # error native architecture endianness must be defined
 #endif

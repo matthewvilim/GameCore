@@ -1,36 +1,34 @@
 /*
  * Core 8086 Copyright (C) 2014 Matthew Vilim
  *
- * src/shared/macros.h
+ * src/cpu/x86_instr.h
  */
+
+#ifndef INSTR
+#define INSTR
 
 /******************
  * REGISTER MASKS *
  ******************/
 
-#define FLAG_MASK_CF      BIT(0)
-#define FLAG_MASK_RES0    BIT(1)
-#define FLAG_MASK_PF      BIT(2)
-#define FLAG_MASK_RES1    BIT(3)
-#define FLAG_MASK_AF      BIT(4)
-#define FLAG_MASK_RES2    BIT(5)
-#define FLAG_MASK_ZF      BIT(6)
-#define FLAG_MASK_SF      BIT(7)
-#define FLAG_MASK_TF      BIT(8)
-#define FLAG_MASK_IF      BIT(9)
-#define FLAG_MASK_DF      BIT(10)
-#define FLAG_MASK_OF      BIT(11)
-#define FLAG_MASK_RES3    MASK_RANGE(15, 12)
+#define X86_FLAG_MASK_CF      BIT(0)
+#define X86_FLAG_MASK_RES0    BIT(1)
+#define X86_FLAG_MASK_PF      BIT(2)
+#define X86_FLAG_MASK_RES1    BIT(3)
+#define X86_FLAG_MASK_AF      BIT(4)
+#define X86_FLAG_MASK_RES2    BIT(5)
+#define X86_FLAG_MASK_ZF      BIT(6)
+#define X86_FLAG_MASK_SF      BIT(7)
+#define X86_FLAG_MASK_TF      BIT(8)
+#define X86_FLAG_MASK_IF      BIT(9)
+#define X86_FLAG_MASK_DF      BIT(10)
+#define X86_FLAG_MASK_OF      BIT(11)
+#define X86_FLAG_MASK_RES3    MASK_RANGE(15, 12)
 
 /*********************
  * INSTRUCTION MASKS *
  *********************/
 
-#define X86_OPCODE_W_0_MASK    BIT(0)
-#define X86_OPCODE_W_3_MASK    BIT(3)
-#define X86_OPCODE_D_MASK      BIT(1)
-#define X86_OPCODE_REG_MASK    MASK_RANGE(2, 0)
-#define X86_OPCODE_S_MASK      BIT(1)
 #define X86_MODRM_MOD_MASK     MASK_RANGE(7, 6)
 #define X86_MODRM_REG_MASK     MASK_RANGE(5, 3)
 #define X86_MODRM_RM_MASK      MASK_RANGE(2, 0)
@@ -99,60 +97,53 @@
 #define INSTR_RM_DH_SI    0x6
 #define INSTR_RM_BH_DI    0x7
 
-typedef enum {
-    AddressingCodeNone,
-    AddressingCodeA,
-    AddressingCodeE,
-    AddressingCodeG,
-    AddressingCodeI,
-    AddressingCodeJ,
-    AddressingCodeM,
-    AddressingCodeO,
-    AddressingCodeS
-} addressing_code_t;
+typedef uint8_t byte_t;
+typedef uint16_t word_t;
 
-typedef enum {
-    OperandCode0,
-    OperandCodeB,
-    OperandCodeP,
-    OperandCodeW,
-    OperandCodeV
-} operand_code_t;
+typedef struct operand {
+    union {
+        byte_t b;
+        word_t w;
+    };
+    union {
+        lin_addr_t addr;
+        uint8_t reg;
+    };
+} operand_t;
 
-typedef enum register_code {
-    RegisterCodeNone,
-    RegisterCodeAL,
-    RegisterCodeCL,
-    RegisterCodeDL,
-    RegisterCodeBL,
-    RegisterCodeAH,
-    RegisterCodeCH,
-    RegisterCodeDH,
-    RegisterCodeBH,
-    RegisterCodeAX,
-    RegisterCodeCX,
-    RegisterCodeDX,
-    RegisterCodeBX,
-    RegisterCodeSP,
-    RegisterCodeBP,
-    RegisterCodeSI,
-    RegisterCodeDI,
-    RegisterCodeES,
-    RegisterCodeCS,
-    RegisterCodeSS,
-    RegisterCodeDS
-} register_code_t;
+typedef struct instr {
+    lin_addr_t instr_addr;
+    size_t len;
+
+    // prefix
+    byte_t instr_prefix;
+    bool seg_prefix;
+    uint8_t seg;
+
+    operand_t op1;
+    operand_t op2;
+    union result {
+        byte_t b;
+        word_t w;
+    };
+} instr_t;
+
+typedef void (*instr_read_t)(const cpu_t *cpu, instr_t *instr);
+typedef void (*instr_exe_t)(const cpu_t *cpu, instr_t *instr);
+typedef void (*instr_write_t)(cpu_t *cpu, const instr_t *instr);
 
 typedef struct op_group {
     char *name;
+    uint8_t seg_default;
 } op_group_t;
 
 typedef struct op_info {
     op_group_t *group;
-    addressing_code_t src;
-    addressing_code_t dst;
-    operand_code_t  operand_code;
-    register_code_t register_code;
+
+    instr_read__t read;
+    instr_execute_t exe;
+    instr_write_t write;
+
 } op_info_t;
 
 extern op_group_t add;
