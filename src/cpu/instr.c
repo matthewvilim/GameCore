@@ -19,153 +19,201 @@ const op_info_t op_table[] = {
 
 }
 
-GC_INLINE void
-_read_reg_b(const cpu_t *cpu, operand_t *operand, const uint8_t reg) {
-    operand->reg = reg;
-    cpu_gen_read_b(cpu, operand->reg);
-}
+GC_INLINE void *
+_modrm_E(const cpu_t *cpu, instr_t *instr, bool byte) {
+    instr->modrm_len = 1;
 
-GC_INLINE void
-_read_reg_w(const cpu_t *cpu, operand_t *operand, const uint8_t reg) {
-    operand->reg = reg;
-    cpu_gen_read_w(cpu, operand->reg);
-}
+    uint8_t mod = BIT_FIELD_READ(instr->addr[1], X86_MODRM_MOD_MASK);
+    uint8_t rm = BIT_FIELD_READ(instr->addr[1], X86_MODRM_RM_MASK);
 
-GC_INLINE void
-_read_ob(const cpu_t *cpu, operand_t *operand, const lin_addr_t instr_addr) {
-    operand->addr = instr_addr;
-    operand->addr.offset++;
     lin_addr_t addr;
-    addr.base =
-    addr.offset = mem_read_w(mem, operand->addr);
-    operand->b = mem_read_b(mem, addr);
+    addr.base = instr->seg;
+
+    switch (mod) {
+        case X86_MOD_NO_DISP:
+        case X86_MOD_B_DISP:
+        case X86_MOD_W_DISP:
+            switch (rm) {
+                case X86_RM_BX_PLUS_SI:
+                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BX) +
+                                  *cpu_gen_w_host(cpu, X86_REG_SI);
+                    break;
+                case X86_RM_BX_PLUS_DI:
+                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BX) +
+                                  *cpu_gen_w_host(cpu, X86_REG_DI);
+                    break;
+                case X86_RM_BP_PLUS_SI:
+                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BP) +
+                                  *cpu_gen_w_host(cpu, X86_REG_SI);
+                    break;
+                case X86_RM_BP_PLUS_DI:
+                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BP) +
+                                  *cpu_gen_w_host(cpu, X86_REG_DI);
+                    break;
+                case X86_RM_SI:
+                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_SI);
+                    break;
+                case X86_RM_DI:
+                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_DI);
+                    break;
+                case X86_RM_BP_OR_DIR_ADDR:
+                        addr.offset = mod == X86_MOD_NO_DISP ?
+                                      *(word_t *)(instr->addr + 2) :
+                                      cpu_gen_w_host(cpu, X86_REG_BP);
+                    break;
+                case X86_RM_BX:
+                    addr.offset = cpu_gen_w_host(cpu, X86_REG_BX);
+                    break;
+                default: break;
+            }
+            break;
+            case X86_MOD_REG:
+                return byte ? cpu_gen_b_host(cpu, rm) : cpu_gen_w_host(cpu, rm);
+                break;
+        default: break;
+    }
+
+    switch (mod) {
+        case X86_MOD_B_DISP:
+            instr->modrm_len++;
+            addr->offset += instr_host[2];
+        case X86_MOD_W_DISP:
+            instr->modrm_len += 2;
+            addr->offset += *(word_t *)(instr_host + 2);
+        default: break;
+    }
+
+    instr->len += instr->modrm_len;
+
+    return mem_addr_host(cpu->mem, addr);
 }
 
-GC_INLINE void
-_read_ow(const cpu_t *cpu, operand_t *operand, const lin_addr_t instr_addr) {
-    operand->addr = instr_addr;
-    operand->addr.offset++;
-    addr.base =
-    addr.offset = mem_read_w(mem, operand->addr);
-    operand->w = mem_read_w(mem, addr);
+GC_INLINE void *
+_modrm_G(const cpu_t *cpu, instr_t *instr, bool byte) {
+    uint8_t gen = BIT_FIELD_READ(instr->addr[1], X86_MODRM_REG_MASK);
+    return byte ? cpu_gen_b_host(cpu, gen) : cpu_gen_w_host(cpu, gen);
 }
 
-GC_INLINE void
-_read_ib(const cpu_t *cpu, operand_t *operand, const lin_addr_t instr_addr) {
-    operand->addr = instr_addr;
-    operand->addr.offset++;
-    operand->b = mem_read_b(mem, operand->addr);
-}
-
-GC_INLINE void
-_read_iw(const cpu_t *cpu, operand_t *operand, const lin_addr_t instr_addr) {
-    operand->addr = instr_addr;
-    operand->addr.offset++;
-    operand->w = mem_read_w(mem, operand->addr);
+GC_INLINE void *
+_modrm_S(const cpu_t *cpu, instr_t *instr) {
+    uint8_t seg = BIT_FIELD_READ(instr->addr[1], X86_MODRM_REG_MASK);
+    return cpu_seg_host(cpu, seg);
 }
 
 void
-_read_dummy(const cpu_t *cpu, instr_t *instr) {};
-
-void
-_exe_dummy(const cpu_t *cpu, instr_t *instr) {};
-
-void
-_write_dummy(const cpu_t *cpu, instr_t *instr) {};
-
-// Eb Gb
-void
-
-// AL Ob
-void
-_read_al_ob(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_AL);
-    _read_ob(cpu, &instr->op2, instr->instr_addr);
+_ops_Ew_Sw(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = _modrm_E(cpu, instr, false);
+    instr->op2.b = _modrm_S(cpu, instr);
 }
 
-// Ob AL
 void
-_read_ob_al(const cpu_t *cpu, instr_t *instr) {
-    _read_ob(cpu, &instr->op1, instr->instr_addr)
-    _read_reg_b(cpu, &instr->op2, X86_REG_AL);
+_ops_Sw_Ew(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = _modrm_S(cpu, instr);
+    instr->op2.b = _modrm_E(cpu, instr, false);
 }
 
-// AX Ow
 void
-_read_ax_ow(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_w(cpu, &instr->op1, X86_REG_AX);
-    _read_ow(cpu, &instr->op2, instr->instr_addr);
+_ops_Eb_Gb(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = _modrm_E(cpu, instr, true);
+    instr->op2.b = _modrm_G(cpu, instr, true);
 }
 
-// Ow AX
 void
-_read_ow_ax(const cpu_t *cpu, instr_t *instr) {
-    _read_ow(cpu, &instr->op1, instr->instr_addr);
-    _read_reg_w(cpu, &instr->op2, X86_REG_AX);
+_ops_Gb_Eb(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = _modrm_G(cpu, instr, true);
+    instr->op2.b = _modrm_E(cpu, instr, true);
 }
 
-// AL Ib
 void
-_read_al_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_AL);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_Ew_Gw(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.w = _modrm_E(cpu, instr, false);
+    instr->op2.w = _modrm_G(cpu, instr, false);
 }
 
-// CL Ib
 void
-_read_cl_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_CL);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_Gw_Ew(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.w = _modrm_G(cpu, instr, false);
+    instr->op2.w = _modrm_E(cpu, instr, false);
 }
 
-// DL Ib
 void
-_read_dl_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_DL);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_AL_Ob(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_AL);
+    instr->op2.b = instr.addr + 1
 }
 
-// BL Ib
 void
-_read_bl_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_BL);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_Ob_AL(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = instr.addr + 1;
+    instr->op2.b = cpu_gen_b_host(cpu, X86_REG_AL);
 }
 
-// AH Ib
 void
-_read_ah_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_AH);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_AX_Ow(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.w = cpu_gen_w_host(cpu, X86_REG_AX);
+    instr->op2.w = instr.addr + 1
 }
 
-// CH Ib
 void
-_read_ch_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_CH);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_Ow_AX(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.w = instr.addr + 1
+    instr->op2.w = cpu_gen_w_host(cpu, X86_REG_AX);
 }
 
-// DH Ib
 void
-_read_dh_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_DH);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_AL_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_AL);
+    instr->op2.b = instr->addr[1];
 }
 
-// BH Ib
 void
-_read_bh_ib(const cpu_t *cpu, instr_t *instr) {
-    _read_reg_b(cpu, &instr->op1, X86_REG_BH);
-    _read_ib(cpu, &instr->op2, instr->instr_addr);
+_ops_CL_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_CL);
+    instr->op2.b = instr->addr[1];
 }
 
-void _write_reg_b(cpu_t *cpu, const instr_t *instr) {
-    cpu_gen_write_b(cpu, instr->op1.reg, instr->result.b);
+void
+_ops_DL_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_DL);
+    instr->op2.b = instr->addr[1];
 }
 
-void _write_reg_w(cpu_t *cpu, const instr_t *instr) {
-    cpu_gen_write_w(cpu, instr->op1.reg, instr->result.w);
+void
+_ops_BL_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_BH);
+    instr->op2.b = instr->addr[1];
 }
 
-#endif
+void
+_ops_AH_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_AH);
+    instr->op2.b = instr->addr[1];
+}
+
+void
+_ops_CH_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_CH);
+    instr->op2.b = instr->addr[1];
+}
+
+void
+_ops_DH_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_DH);
+    instr->op2.b = instr->addr[1];
+}
+
+void
+_ops_BH_Ib(const cpu_t *cpu, instr_t *instr) {
+    instr->op1.b = cpu_gen_b_host(cpu, X86_REG_BH);
+    instr->op2.b = instr->addr[1];
+}
+
+void
+_exe_movb(const cpu_t *cpu, const instr_t *instr) {
+    *op1.b = *op2.b;
+}
+
+void
+_exe_movw(const cpu_t *cpu, const instr_t *instr) {
+    *op1.w = *op2.w;
+}

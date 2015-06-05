@@ -100,49 +100,36 @@
 typedef uint8_t byte_t;
 typedef uint16_t word_t;
 
-typedef struct operand {
-    union {
-        byte_t b;
-        word_t w;
-    };
-    union {
-        lin_addr_t addr;
-        uint8_t reg;
-    };
+typedef union operand {
+    byte_t *b;
+    word_t *w;
 } operand_t;
 
 typedef struct instr {
-    lin_addr_t instr_addr;
+    byte_t *addr;
     size_t len;
+    size_t modrm_len;
 
-    // prefix
     byte_t instr_prefix;
     bool seg_prefix;
     uint8_t seg;
 
-    operand_t op1;
-    operand_t op2;
-    union result {
-        byte_t b;
-        word_t w;
-    };
+    operand_t op1, op2;
 } instr_t;
 
-typedef void (*instr_read_t)(const cpu_t *cpu, instr_t *instr);
-typedef void (*instr_exe_t)(const cpu_t *cpu, instr_t *instr);
-typedef void (*instr_write_t)(cpu_t *cpu, const instr_t *instr);
+typedef void (*instr_ops_t)(const cpu_t *cpu, instr_t *instr);
+typedef void (*instr_exe_t)(cpu_t *cpu, instr_t *instr);
 
 typedef struct op_group {
     char *name;
-    uint8_t seg_default;
+    uint8_t seg;
 } op_group_t;
 
 typedef struct op_info {
     op_group_t *group;
 
-    instr_read__t read;
-    instr_execute_t exe;
-    instr_write_t write;
+    instr_ops_t ops;
+    instr_exe_t exe;
 
 } op_info_t;
 

@@ -33,12 +33,13 @@ void
 _emulate_instr(cpu_t *cpu) {
     instr_t instr;
 
-    instr.instr_addr = { .base = cpu_seg_read(cpu, X86_REG_CS), .offset = cpu_ip_read(cpu) };
+    lin_addr_t addr;
+    addr.base = *cpu_seg_host(cpu, X86_REG_CS);
+    addr.offset = *cpu_ip_host(cpu);
+    instr.addr; = mem_addr_host(cpu->mem, addr);
 
     for (bool done = false, int i = 0; !done; i++) {
-        lin_addr_t prefix_addr = instr.instr_addr;
-        prefix_addr.offset += i;
-        byte_t prefix = mem_readb(cpu->mem, prefix_addr);
+        byte_t prefix = instr.addr[i];
         switch (prefix) {
             case X86_PREFIX_REP:
             case X86_PREFIX_REPE_REPZ:
@@ -47,26 +48,36 @@ _emulate_instr(cpu_t *cpu) {
                 instr.instr_prefix = prefix;
                 break;
             case X86_PREFIX_OVERRIDE_CS:
-                instr.seg = X86_REG_CS;
+                instr.seg_prefix = true;
+                instr.seg = seg;
             case X86_PREFIX_OVERRIDE_SS:
-                instr.seg = X86_REG_SS;
+                instr.seg_prefix = true;
+                instr.seg = seg;
             case X86_PREFIX_OVERRIDE_DS:
-                instr.seg = X86_REG_DS;
+                instr.seg_prefix = true;
+                instr.seg = seg;
             case X86_PREFIX_OVERRIDE_ES:
-                instr.seg = X86_REG_ES;
+                instr.seg_prefix = true;
+                instr.seg = seg;
                 break;
             default:
-                instr.instr_addr.offset += i;
                 instr.len = i;
                 done = true;
                 break;
         }
     }
 
-    byte_t opcode = mem_readb(cpu->mem, prefix_addr);
+    byte_t opcode = mem_addr_host(cpu->mem, instr.addr[0]);
     op_info_t *op_info = op_table[opcode];
 
+    if (!instr.seg_prefix) {
+        instr.seg = op_info->group.seg;
+    }
 
+    op_info->get_ops(cpu, instr);
+    op_info->exe(cpu, instr);
+
+    *cpu_ip_host(cpu) += instr.len;
 }
 
 GC_INLINE void
