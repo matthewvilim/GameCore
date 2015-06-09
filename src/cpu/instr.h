@@ -99,14 +99,24 @@
 
 typedef uint8_t byte_t;
 typedef uint16_t word_t;
+typedef uint32_t dword_t;
 
-typedef union operand {
-    byte_t *b;
-    word_t *w;
+typedef void (*op_handler_t)(const cpu_t *cpu, instr_t *instr, operand_t *operand);
+
+typedef struct operand {
+    op_handler_t handler;
+    uint8_t seg;
+    union {
+        void *host;
+        byte_t *b;
+        word_t *w;
+        dword_t *dw;
+    };
 } operand_t;
 
 typedef struct instr {
-    byte_t *addr;
+    byte_t *opcode;
+
     size_t len;
     size_t modrm_len;
 
@@ -115,9 +125,10 @@ typedef struct instr {
     uint8_t seg;
 
     operand_t op1, op2;
+    instr_exe_t exe;
 } instr_t;
 
-typedef void (*instr_ops_t)(const cpu_t *cpu, instr_t *instr);
+
 typedef void (*instr_exe_t)(cpu_t *cpu, instr_t *instr);
 
 typedef struct op_group {
@@ -128,7 +139,8 @@ typedef struct op_group {
 typedef struct op_info {
     op_group_t *group;
 
-    instr_ops_t ops;
+    decode_t decode_op1;
+    decode_t decode_op2;
     instr_exe_t exe;
 
 } op_info_t;

@@ -37,13 +37,36 @@
  * COMMON BIT MASKS *
  ********************/
 
-#define MASK_LOW_B     MASK_RANGE(8, 0)
+#ifndef __has_builtin
+# define __has_builtin(x) 0
+#endif
+
+#if __has_builtin(__builtin_bswap32)
+# define BYTE_SWAP32(val) __builtin_bswap32(val)
+#else
+# define BYTE_SWAP32(val) ((((val) & MASK_RANGE(31, 24)) >> 24) \
+                         | (((val) & MASK_RANGE(23, 16)) >> 8)  \
+                         | (((val) & MASK_RANGE(15, 8))  << 8)  \
+                         | (((val) & MASK_RANGE(7, 0))   << 24))
+#endif
+
+#if __has_builtin(__builtin_bswap16)
+# define BYTE_SWAP16(val) __builtin_bswap16(val)
+#else
+# define BYTE_SWAP16(val) ((val >> 8) | (val << 8))
+#endif
+
+#define MASK_LOW_B     MASK_RANGE(7, 0)
 #define MASK_HIGH_B   (MASK_LOW_B << 8)
 #define MASK_W        (MASK_LOW_B | MASK_HIGH_B)
 
+#if
+
 #if GC_ARCH_NATIVE_BIG_ENDIAN
-# define ENDIAN_CONV_WORD(val)    ((val >> 8) | (val << 8))
+# define ENDIAN_CONV_DWORD(val)   BYTE_SWAP32(val)
+# define ENDIAN_CONV_WORD(val)    BYTE_SWAP16(val)
 #else
+# define ENDIAN_CONV_DWORD(val)   (val)
 # define ENDIAN_CONV_WORD(val)    (val)
 #endif
 
