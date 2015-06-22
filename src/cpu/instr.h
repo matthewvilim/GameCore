@@ -79,10 +79,10 @@
 #define X86_MOD_REG        0x3
 // R/M - Register/Memory
 // MOD = 0x0, 0x1, 0x2
-#define INSTR_RM_BX+SI             0x0
-#define INSTR_RM_BX+DI             0x1
-#define INSTR_RM_BP+SI             0x2
-#define INSTR_RM_BP+DI             0x3
+#define X86_INSTR_RM_BX_PLUS_SI    0x0
+#define X86_INSTR_RM_BX_PLUS_DI    0x1
+#define INSTR_RM_BP_PLUS_SI        0x2
+#define INSTR_RM_BP_PLUS_DI        0x3
 #define INSTR_RM_SI                0x4
 #define INSTR_RM_DI                0x5
 #define INSTR_RM_BP_OR_DIR_ADDR    0x6
@@ -97,32 +97,52 @@
 #define INSTR_RM_DH_SI    0x6
 #define INSTR_RM_BH_DI    0x7
 
+#define INSTR_FLAGS_SEG_PREFIX     BIT(0)
+#define INSTR_FLAGS_OP_SIZE_MASK   BIT(1)
+#define INSTR_FLAGS_ADDR_SIZE_MASK BIT(2)
+
 typedef uint8_t byte_t;
 typedef uint16_t word_t;
 typedef uint32_t dword_t;
 
-typedef void (*op_handler_t)(const cpu_t *cpu, instr_t *instr, operand_t *operand);
-
 typedef struct operand {
-    op_handler_t handler;
+    addr_calc_t addr_calc;
     uint8_t seg;
     union {
-        void *host;
+
+    }
+    union {
         byte_t *b;
         word_t *w;
         dword_t *dw;
     };
 } operand_t;
 
+typedef struct modrm {
+    uint8_t scale;
+    union {
+        uint8_t index;
+    }
+    union {
+        uint8_t base;
+    }
+    union {
+        int16_t disp16;
+        int32_t disp32;
+    };
+} modrm_t;
+
 typedef struct instr {
     byte_t *opcode;
 
-    size_t len;
+    uint8_t len;
+
+    modrm_t modrm;
     size_t modrm_len;
 
     byte_t instr_prefix;
-    bool seg_prefix;
-    uint8_t seg;
+
+    uint8_t flags;
 
     operand_t op1, op2;
     instr_exe_t exe;
@@ -133,7 +153,8 @@ typedef void (*instr_exe_t)(cpu_t *cpu, instr_t *instr);
 
 typedef struct op_group {
     char *name;
-    uint8_t seg;
+    uint8_t op1_seg;
+    uint8_t op2_seg;
 } op_group_t;
 
 typedef struct op_info {

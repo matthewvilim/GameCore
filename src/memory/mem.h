@@ -13,23 +13,55 @@
 #define MEM_LINEAR_ADDRESS_SPACE     (1 << 20) // 1 MB
 #define MEM_MASK_LINEAR_ADDRESS      (MEM_LINEAR_ADDRESS_SPACE - 1)
 
-typedef struct lin_addr {
-    word_t base;
-    word_t offset;
-} lin_addr_t;
+typedef byte_t (*mem_read_b_t)(const cpu_t *cpu);
+typedef word_t (*mem_read_w_t)(const cpu_t *cpu);
+typedef dword_t (*mem_read_dw_t)(const cpu_t *cpu);
+typedef void (*mem_write_b_t)(const cpu_t *cpu, const byte_t val);
+typedef void (*mem_write_w_t)(const cpu_t *cpu, const word_t val);
+typedef void (*mem_write_dw_t)(const cpu_t *cpu, const dword_t val);
 
-typedef struct {
+typedef struct mem_handler_read {
+    mem_read_b_t b;
+    mem_read_w_t w;
+    mem_read_dw_t dw;
+} mem_handler_read_t;
+
+typedef struct mem_handler_write {
+    mem_write_b_t b;
+    mem_write_w_t w;
+    mem_write_dw_t dw;
+} mem_handler_write_t;
+
+extern const mem_handler_read_t mem_real_read;
+extern const mem_handler_write_t mem_real_write;
+extern const mem_handler_read_t mem_protected_read;
+extern const mem_handler_write_t mem_protected_write;
+
+typedef union addr_offset {
+    word_t w;
+    dword_t dw;
+} addr_offset_t;
+
+typedef dword_t virt_addr_t;
+typedef dword_t phys_addr_t;
+
+typedef struct mem {
     byte_t *base;
+
+    mem_handler_read_t read;
+    mem_handler_write_t write;
 } mem_t;
 
-GC_INLINE void *
-mem_addr_host(mem_t *mem, const lin_addr_t lin_addr) {
-    return mem->base + mem_lin_addr_calc(lin_addr);
+GC_INLINE void
+mem_setup_real(mem_t *mem) {
+    mem->read = mem_real_read;
+    mem->write = mem_real_write;
 }
 
-GC_INLINE uint32_t
-mem_lin_addr_calc(const lin_addr_t lin_addr) {
-    return ((lin_addr.base << 4) + lin_addr.offset) & MEM_MASK_LINEAR_ADDRESS;
+GC_INLINE void
+mem_setup_protected(mem_t *mem) {
+    mem->read = mem_protected_read;
+    mem->write = mem_protected_write;
 }
 
 #endif

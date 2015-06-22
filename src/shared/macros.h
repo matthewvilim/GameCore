@@ -56,9 +56,11 @@
 # define BYTE_SWAP16(val) ((val >> 8) | (val << 8))
 #endif
 
-#define MASK_LOW_B     MASK_RANGE(7, 0)
-#define MASK_HIGH_B   (MASK_LOW_B << 8)
-#define MASK_W        (MASK_LOW_B | MASK_HIGH_B)
+#define MASK_LOW_B     MASK_RANGE( 7, 0)
+#define MASK_HIGH_B    MASK_RANGE(15, 8)
+#define MASK_LOW_W     MASK_RANGE(15, 0)
+#define MASK_HIGH_W    MASK_RANGE(31, 16)
+#define MAKS_DW        MASK_RANGE(31, 0)
 
 #if
 

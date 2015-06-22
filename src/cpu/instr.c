@@ -20,120 +20,57 @@ const op_info_t op_table[] = {
 }
 
 GC_INLINE void *
-_modrm_E(const cpu_t *cpu, instr_t *instr, bool byte) {
-    instr->modrm_len = 1;
-
-    uint8_t mod = BIT_FIELD_READ(instr->addr[1], X86_MODRM_MOD_MASK);
-    uint8_t rm = BIT_FIELD_READ(instr->addr[1], X86_MODRM_RM_MASK);
-
-    lin_addr_t addr;
-    addr.base = instr->seg;
-
-    switch (mod) {
-        case X86_MOD_NO_DISP:
-        case X86_MOD_B_DISP:
-        case X86_MOD_W_DISP:
-            switch (rm) {
-                case X86_RM_BX_PLUS_SI:
-                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BX) +
-                                  *cpu_gen_w_host(cpu, X86_REG_SI);
-                    break;
-                case X86_RM_BX_PLUS_DI:
-                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BX) +
-                                  *cpu_gen_w_host(cpu, X86_REG_DI);
-                    break;
-                case X86_RM_BP_PLUS_SI:
-                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BP) +
-                                  *cpu_gen_w_host(cpu, X86_REG_SI);
-                    break;
-                case X86_RM_BP_PLUS_DI:
-                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_BP) +
-                                  *cpu_gen_w_host(cpu, X86_REG_DI);
-                    break;
-                case X86_RM_SI:
-                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_SI);
-                    break;
-                case X86_RM_DI:
-                    addr.offset = *cpu_gen_w_host(cpu, X86_REG_DI);
-                    break;
-                case X86_RM_BP_OR_DIR_ADDR:
-                        addr.offset = mod == X86_MOD_NO_DISP ?
-                                      *(word_t *)(instr->addr + 2) :
-                                      cpu_gen_w_host(cpu, X86_REG_BP);
-                    break;
-                case X86_RM_BX:
-                    addr.offset = cpu_gen_w_host(cpu, X86_REG_BX);
-                    break;
-                default: break;
-            }
-            break;
-            case X86_MOD_REG:
-                return byte ? cpu_gen_b_host(cpu, rm) : cpu_gen_w_host(cpu, rm);
-                break;
-        default: break;
+_modrm_G_S(const cpu_t *cpu, instr_t *instr, bool gen) {
+    uint8_t reg = BIT_FIELD_READ(instr->addr[1], X86_MODRM_REG_MASK);
+    if (gen) {
+        switch (instr->op_size) {
+            case OperandSizeB:
+                return cpu_gen_b_host(cpu, gen);
+            case OperandSizeW:
+                return cpu_gen_w_host(cpu, gen);
+            case OperandSizeDW:
+                return cpu_gen_dw_host(cpu, gen);
+            default:
+        }
+    } else {
+        return cpu_seg_host(cpu, seg);
     }
-
-    switch (mod) {
-        case X86_MOD_B_DISP:
-            instr->modrm_len++;
-            addr->offset += instr_host[2];
-        case X86_MOD_W_DISP:
-            instr->modrm_len += 2;
-            addr->offset += *(word_t *)(instr_host + 2);
-        default: break;
-    }
-
-    instr->len += instr->modrm_len;
-
-    return mem_addr_host(cpu->mem, addr);
-}
-
-GC_INLINE void *
-_modrm_G(const cpu_t *cpu, instr_t *instr, bool byte) {
-    uint8_t gen = BIT_FIELD_READ(instr->addr[1], X86_MODRM_REG_MASK);
-    return byte ? cpu_gen_b_host(cpu, gen) : cpu_gen_w_host(cpu, gen);
-}
-
-GC_INLINE void *
-_modrm_S(const cpu_t *cpu, instr_t *instr) {
-    uint8_t seg = BIT_FIELD_READ(instr->addr[1], X86_MODRM_REG_MASK);
-    return cpu_seg_host(cpu, seg);
 }
 
 void
 _ops_Ew_Sw(const cpu_t *cpu, instr_t *instr) {
-    instr->op1.b = _modrm_E(cpu, instr, false);
+    instr->op1.b = _modrm_E(cpu, instr, instr->op1.seg, false);
     instr->op2.b = _modrm_S(cpu, instr);
 }
 
 void
 _ops_Sw_Ew(const cpu_t *cpu, instr_t *instr) {
     instr->op1.b = _modrm_S(cpu, instr);
-    instr->op2.b = _modrm_E(cpu, instr, false);
+    instr->op2.b = _modrm_E(cpu, instr, instr->op2.seg, false);
 }
 
 void
 _ops_Eb_Gb(const cpu_t *cpu, instr_t *instr) {
-    instr->op1.b = _modrm_E(cpu, instr, true);
+    instr->op1.b = _modrm_E(cpu, instr, instr->op1.seg, true);
     instr->op2.b = _modrm_G(cpu, instr, true);
 }
 
 void
 _ops_Gb_Eb(const cpu_t *cpu, instr_t *instr) {
     instr->op1.b = _modrm_G(cpu, instr, true);
-    instr->op2.b = _modrm_E(cpu, instr, true);
+    instr->op2.b = _modrm_E(cpu, instr, instr->op2.seg, true);
 }
 
 void
 _ops_Ew_Gw(const cpu_t *cpu, instr_t *instr) {
-    instr->op1.w = _modrm_E(cpu, instr, false);
+    instr->op1.w = _modrm_E(cpu, instr, instr->op1.seg, false);
     instr->op2.w = _modrm_G(cpu, instr, false);
 }
 
 void
 _ops_Gw_Ew(const cpu_t *cpu, instr_t *instr) {
     instr->op1.w = _modrm_G(cpu, instr, false);
-    instr->op2.w = _modrm_E(cpu, instr, false);
+    instr->op2.w = _modrm_E(cpu, instr, instr->op2.seg, false);
 }
 
 void
