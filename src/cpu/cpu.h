@@ -9,14 +9,33 @@
 #ifndef CPU_H
 #define CPU_H
 
-#define
+/*  31     22 21       12 11     0
+ * +---------+-----------+--------+
+ * | tlb tag | tlb index | offset |
+ * +---------+-----------+--------+
+ *   10 bits    10 bits    12 bits
+*/
+
+#define PAGE_SIZE_LOG2      12
+#define TLB_SIZE_LOG2       10
+#define TLB_SIZE           (1 << TLB_SIZE_LOG2)
+#define MASK_TLB_OFFSET     MASK_RANGE(PAGE_SIZE_LOG2 - 1, 0)
+#define MASK_TLB_INDEX      MASK_RANGE(TLB_SIZE_LOG2 + PAGE_SIZE_LOG2 - 1, PAGE_SIZE_LOG2)
+#define MASK_TLB_TAG        MASK_RANGE(31, TLB_SIZE_LOG2 + PAGE_SIZE_LOG2)
+
+typedef struct tlb_entry {
+    addr_virt_t phys;
+    addr_phys_t virt;
+    byte_t *host;
+    uint8_t permission;
+} tlb_entry_t;
 
 typedef struct cpu {
     struct reg_file {
         // general purpose registers
         dword_t gen[8];
         // segment registers
-        word_t seg[4];
+        word_t seg[6];
         // instruction pointer
         dword_t eip;
         // flags
@@ -24,7 +43,9 @@ typedef struct cpu {
     };
 
     mem_t *mem;
-    bool
+    typedef struct tlb {
+        tlb_entry_t entries[TLB_SIZE];
+    };
 } cpu_t;
 
 // EIP

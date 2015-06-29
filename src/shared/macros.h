@@ -26,17 +26,19 @@
 // read/write masks
 #define BIT_FIELD_READ(in, mask)         (((in) & (mask)) >> LOW_BIT_IDX(mask))
 #define BIT_FIELD_WRITE(in, mask, val)    (((in) & ~(mask)) | ((val) << LOW_BIT_IDX(mask)))
-#define MASK_CLEAR(in, mask)           BIT_FIELD_WRITE(in, mask, 0)
-#define MASK_TEST_VAL(in, mask, val)   (BIT_FIELD_WRITE(0, mask, (val)) == ((in) & (mask)))
-// boolean operations
-#define MASK_OR_VAL(in, mask, val)     (BIT_FIELD_WRITE(0, mask, (val)) | (in))
-#define MASK_AND_VAL(in, mask, val)    (BIT_FIELD_WRITE(0, mask, (val)) & (in))
-#define MASK_XOR_VAL(in, mask, val)    (BIT_FIELD_WRITE(0, mask, (val)) ^ (in))
 
 /********************
  * COMMON BIT MASKS *
  ********************/
+ #define MASK_LOW_B     MASK_RANGE( 7, 0)
+ #define MASK_HIGH_B    MASK_RANGE(15, 8)
+ #define MASK_LOW_W     MASK_RANGE(15, 0)
+ #define MASK_HIGH_W    MASK_RANGE(31, 16)
+ #define MAKS_DW        MASK_RANGE(31, 0)
 
+ /*********************
+  * ENDIAN CONVERSION *
+  *********************/
 #ifndef __has_builtin
 # define __has_builtin(x) 0
 #endif
@@ -55,14 +57,6 @@
 #else
 # define BYTE_SWAP16(val) ((val >> 8) | (val << 8))
 #endif
-
-#define MASK_LOW_B     MASK_RANGE( 7, 0)
-#define MASK_HIGH_B    MASK_RANGE(15, 8)
-#define MASK_LOW_W     MASK_RANGE(15, 0)
-#define MASK_HIGH_W    MASK_RANGE(31, 16)
-#define MAKS_DW        MASK_RANGE(31, 0)
-
-#if
 
 #if GC_ARCH_NATIVE_BIG_ENDIAN
 # define ENDIAN_CONV_DWORD(val)   BYTE_SWAP32(val)
