@@ -106,7 +106,6 @@ typedef uint16_t word_t;
 typedef uint32_t dword_t;
 
 typedef struct operand {
-    addr_calc_t addr_calc;
     uint8_t seg;
     union {
 
@@ -119,13 +118,10 @@ typedef struct operand {
 } operand_t;
 
 typedef struct modrm {
+    uint8_t mod;
     uint8_t scale;
-    union {
-        uint8_t index;
-    }
-    union {
-        uint8_t base;
-    }
+    uint8_t index;
+    uint8_t base;
     union {
         int16_t disp16;
         int32_t disp32;
@@ -144,7 +140,7 @@ typedef struct instr {
 
     uint8_t flags;
 
-    operand_t op1, op2;
+    addr_calc_t addr_calc;
     instr_exe_t exe;
 } instr_t;
 

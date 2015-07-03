@@ -67,6 +67,28 @@ _emulate_instr(cpu_t *cpu) {
         }
     }
 
+    instr->modrm.mod = BIT_FIELD_READ(modrm, X86_MODRM_MOD_MASK);
+    if (instr->modrm.mod != 3) {
+        if (instr->flags & ADDR16) {
+
+            instr->calc_addr = calc_addr16_table_modrm[modrm];
+        } else {
+            instr->modrm.base = BIT_FIELD_READ(modrm, X86_MODRM_REG_MASK);
+
+            instr->calc_addr = calc_addr32_table_modrm[modrm];
+            if (!instr->calc_addr) {
+                instr->modrm.scale = BIT_FIELD_READ(sib, X86_SIB_SCALE_MASK);
+                instr->modrm.index = BIT_FIELD_READ(sib, X86_SIB_INDEX_MASK);
+                instr->modrm.base = BIT_FIELD_READ(sib, X86_SIB_BASE_MASK);
+
+                instr->calc_addr = calc_addr32_table_sib[sib][instr->modrm.mod != 0];
+            }
+        }
+    } else {
+        instr->calc_addr = NULL;
+    }
+
+
     byte_t opcode = mem_addr_host(cpu->mem, instr.addr[0]);
     op_info_t *op_info = op_table[opcode];
 
