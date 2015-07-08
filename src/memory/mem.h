@@ -37,13 +37,17 @@ extern const mem_handler_write_t mem_real_write;
 extern const mem_handler_read_t mem_protected_read;
 extern const mem_handler_write_t mem_protected_write;
 
+<<<<<<< HEAD
 typedef struct addr_seg_offset {
     uint8_t seg;
     dword_t offset;
 } addr_seg_offset_t;
+=======
+typedef dword_t addr_offset_t;
+>>>>>>> origin/master
 
-typedef dword_t virt_addr_t;
-typedef dword_t phys_addr_t;
+typedef dword_t addr_virt_t;
+typedef dword_t addr_phys_t;
 
 typedef struct mem {
     byte_t *base;

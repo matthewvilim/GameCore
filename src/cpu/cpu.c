@@ -67,6 +67,7 @@ _emulate_instr(cpu_t *cpu) {
         }
     }
 
+<<<<<<< HEAD
         modrm_info_t *modrm_info;
         uint8_t disp_size;
         if (instr->flags & ADDR16) {
@@ -83,6 +84,36 @@ _emulate_instr(cpu_t *cpu) {
             }
         } else {
             modrm_info = modrm_info_table32 + modrm;
+=======
+    instr->modrm.mod = BIT_FIELD_READ(modrm, X86_MODRM_MOD_MASK);
+    if (instr->modrm.mod != 3) {
+        if (instr->flags & ADDR16) {
+
+            instr->calc_addr = calc_addr16_table_modrm[modrm];
+        } else {
+            instr->modrm.base = BIT_FIELD_READ(modrm, X86_MODRM_REG_MASK);
+
+            instr->calc_addr = calc_addr32_table_modrm[modrm];
+            if (!instr->calc_addr) {
+                instr->modrm.scale = BIT_FIELD_READ(sib, X86_SIB_SCALE_MASK);
+                instr->modrm.index = BIT_FIELD_READ(sib, X86_SIB_INDEX_MASK);
+                instr->modrm.base = BIT_FIELD_READ(sib, X86_SIB_BASE_MASK);
+
+                instr->calc_addr = calc_addr32_table_sib[sib][instr->modrm.mod != 0];
+            }
+        }
+    } else {
+        instr->calc_addr = NULL;
+    }
+
+
+    byte_t opcode = mem_addr_host(cpu->mem, instr.addr[0]);
+    op_info_t *op_info = op_table[opcode];
+
+    if (!instr.seg_prefix) {
+        instr.seg = op_info->group.seg;
+    }
+>>>>>>> origin/master
 
             instr->addr_calc = modrm_info->calc_addr;
             if (modrm_info->calc_addr) {

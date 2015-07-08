@@ -4,6 +4,7 @@ const op_info_t op_info_table[] = {
     // 0x00
     { .instr_exe = instr_exe_add_Eb_Gb }
 }
+<<<<<<< HEAD
 
 modrm16_info modrm16_info_table[] {
     /***********
@@ -622,3 +623,5 @@ modrm32_info modrm_info_sib_override = {
     .disp_size = sizeof(dword_t),
     .sib = true
 };
+=======
+>>>>>>> origin/master
