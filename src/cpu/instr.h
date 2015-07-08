@@ -101,20 +101,6 @@ typedef struct operand {
     };
 } operand_t;
 
-<<<<<<< HEAD
-=======
-typedef struct modrm {
-    uint8_t mod;
-    uint8_t scale;
-    uint8_t index;
-    uint8_t base;
-    union {
-        int16_t disp16;
-        int32_t disp32;
-    };
-} modrm_t;
-
->>>>>>> origin/master
 typedef struct instr {
     byte_t *opcode;
 
@@ -140,11 +126,7 @@ typedef struct instr {
 
     uint8_t flags;
 
-<<<<<<< HEAD
     instr_calc_addr_t calc_addr;
-=======
-    addr_calc_t addr_calc;
->>>>>>> origin/master
     instr_exe_t exe;
 } instr_t;
 
