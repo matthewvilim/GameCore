@@ -67,109 +67,43 @@ _emulate_instr(cpu_t *cpu) {
         }
     }
 
-    byte_t opcode = mem_addr_host(cpu->mem, instr.addr[0]);
-    op_info_t *op_info = op_table[opcode];
+        modrm_info_t *modrm_info;
+        uint8_t disp_size;
+        if (instr->flags & ADDR16) {
+            modrm_info = modrm_info_table16 + modrm;
 
-    if (!instr.seg_prefix) {
-        instr.seg = op_info->group.seg;
-    }
+            instr->addr_calc = modrm_info->calc_addr;
+            if (modrm_info->calc_addr) {
+                disp_size = modrm_info->disp_size;
 
-    op_info->get_ops(cpu, instr);
-    op_info->exe(cpu, instr);
+                instr->modrm.m.base = modrm_info->base;
+                instr->modrm.m.index = modrm_info->index;
+            } else {
+                instr->modrm.r = BIT_FIELD_READ(modrm, X86_MODRM_RM_MASK);
+            }
+        } else {
+            modrm_info = modrm_info_table32 + modrm;
 
-    *cpu_ip_host(cpu) += instr.len;
-}
+            instr->addr_calc = modrm_info->calc_addr;
+            if (modrm_info->calc_addr) {
+                disp_size = modrm_info->disp_size;
 
-GC_INLINE void
-_decode_addressing(cpu_t *cpu, decode_t *decode) {
-    switch (addressing_code) {
-        AddressingCodeE:
-            decode->instr_len++;
+                if (modrm_info->sib) {
+                    instr->modrm.m.base = BIT_FIELD_READ(sib, X86_SIB_BASE_MASK);
+                    instr->modrm.m.index = BIT_FIELD_READ(sib, X86_SIB_INDEX_MASK);
+                    instr->modrm.m.scale = BIT_FIELD_READ(sib, X86_SIB_SCALE_MASK);
 
-            lin_addr_t *addr = &decode->addr;
-
-            decode->mod = BIT_FIELD_READ(instr_host[1], X86_MODRM_MOD_MASK);
-            decode->rm = BIT_FIELD_READ(instr_host[1], X86_MODRM_RM_MASK);
-            decode->reg = BIT_FIELD_READ(instr_host[1], X86_MODRM_REG_MASK);
-
-            switch (mod) {
-                case X86_MOD_NO_DISP:
-                case X86_MOD_B_DISP:
-                case X86_MOD_W_DISP:
-                    switch (rm) {
-                        case X86_RM_BX_PLUS_SI:
-                            addr->offset = cpu_gen_read_w(reg_file, X86_REG_BX) +
-                                           cpu_gen_read_w(reg_file, X86_REG_SI);
-                            break;
-                        case X86_RM_BX_PLUS_DI:
-                            addr->offset = cpu_gen_read_w(reg_file, X86_REG_BX) +
-                                           cpu_gen_read_w(reg_file, X86_REG_DI);
-                            break;
-                        case X86_RM_BP_PLUS_SI:
-                            addr->offset = cpu_gen_read_w(reg_file, X86_REG_BP) +
-                                           cpu_gen_read_w(reg_file, X86_REG_SI);
-                            break;
-                        case X86_RM_BP_PLUS_DI:
-                            addr->offset = cpu_gen_read_w(reg_file, X86_REG_BP) +
-                                           cpu_gen_read_w(reg_file, X86_REG_DI);
-                            break;
-                        case X86_RM_SI:
-                            addr->offset = cpu_gen_read_w(reg_file, X86_REG_SI);
-                            break;
-                        case X86_RM_DI:
-                            addr->offset = cpu_gen_read_w(reg_file, X86_REG_DI);
-                            break;
-                        case X86_RM_BP_OR_DIR_ADDR:
-                            addr->offset = mod != X86_MOD_NO_DISP ?
-                                           cpu_gen_read_w(reg_file, X86_REG_BP) :
-                                           *(word_t *)(instr_host + 2);
-                            break;
-                        case X86_RM_BX:
-                            addr->offset = reg_gen_read_w(reg_file, X86_REG_BX);
-                            break;
-                        default: break;
+                    if (BIT_FIELD_READ(modrm, X86_MODRM_MOD_MASK) == 0x0 && instr->modrm.m.base == 0x5) {
+                        instr->calc_addr = modrm_info_sib_override.calc_addr;
+                        disp_size = modrm_info_sib_override.disp_size;
                     }
-                    break;
-                default: break;
+                } else {
+                    instr->modrm.m.base = BIT_FIELD_READ(modrm, X86_MODRM_RM_MASK);
+                }
+            } else {
+                instr->modrm.r = BIT_FIELD_READ(modrm, X86_MODRM_RM_MASK);
             }
 
-            switch (mod) {
-                case X86_MOD_B_DISP:
-                    decode->instr_len++;
-                    addr->offset += instr_host[2];
-                case X86_MOD_W_DISP:
-                    decode->instr_len += 2;
-                    addr->offset += *(word_t *)(instr_host + 2);
-                default: break;
-            }
-
-            break;
-        default: break;
-    }
-}
-
-
-GC_INLINE void
-_decode_prefix(cpu_t *cpu, decode_t *decode) {
-    decode->prefix_len = 0;
-
-    for (bool done = false, int i = 0; !done; i++) {
-        switch (decode->prefix[i]) {
-            case X86_PREFIX_REP:
-            case X86_PREFIX_REPE_REPZ:
-            case X86_PREFIX_REPNE_REPNZ:
-            case X86_PREFIX_LOCK:
-                decode->prefix_instr = decode->prefix[i];
-                break;
-            case X86_PREFIX_OVERRIDE_CS:
-            case X86_PREFIX_OVERRIDE_SS:
-            case X86_PREFIX_OVERRIDE_DS:
-            case X86_PREFIX_OVERRIDE_ES:
-                decode->prefix_seg = decode->prefix[i];
-                break;
-            default:
-                done = true;
-                decode->prefix_len = i;
-                break;
-    }
+        }
+        instr->modrm.reg = BIT_FIELD_READ(modrm, X86_MODRM_REG_MASK);
 }

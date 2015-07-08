@@ -13,12 +13,12 @@
 #define MEM_LINEAR_ADDRESS_SPACE     (1 << 20) // 1 MB
 #define MEM_MASK_LINEAR_ADDRESS      (MEM_LINEAR_ADDRESS_SPACE - 1)
 
-typedef byte_t (*mem_read_b_t)(const cpu_t *cpu);
-typedef word_t (*mem_read_w_t)(const cpu_t *cpu);
-typedef dword_t (*mem_read_dw_t)(const cpu_t *cpu);
-typedef void (*mem_write_b_t)(const cpu_t *cpu, const byte_t val);
-typedef void (*mem_write_w_t)(const cpu_t *cpu, const word_t val);
-typedef void (*mem_write_dw_t)(const cpu_t *cpu, const dword_t val);
+typedef byte_t (*mem_read_b_t)(const cpu_t *cpu, const addr_seg_offset_t addr);
+typedef word_t (*mem_read_w_t)(const cpu_t *cpu, const addr_seg_offset_t addr);
+typedef dword_t (*mem_read_dw_t)(const cpu_t *cpu, const addr_seg_offset_t addr);
+typedef void (*mem_write_b_t)(const cpu_t *cpu, const addr_seg_offset_t addr, const byte_t val);
+typedef void (*mem_write_w_t)(const cpu_t *cpu, const addr_seg_offset_t addr, const word_t val);
+typedef void (*mem_write_dw_t)(const cpu_t *cpu, const addr_seg_offset_t addr, const dword_t val);
 
 typedef struct mem_handler_read {
     mem_read_b_t b;
@@ -37,10 +37,10 @@ extern const mem_handler_write_t mem_real_write;
 extern const mem_handler_read_t mem_protected_read;
 extern const mem_handler_write_t mem_protected_write;
 
-typedef union addr_offset {
-    word_t w;
-    dword_t dw;
-} addr_offset_t;
+typedef struct addr_seg_offset {
+    uint8_t seg;
+    dword_t offset;
+} addr_seg_offset_t;
 
 typedef dword_t virt_addr_t;
 typedef dword_t phys_addr_t;

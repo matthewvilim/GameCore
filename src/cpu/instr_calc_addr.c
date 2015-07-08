@@ -1,0 +1,67 @@
+/*
+ * Game Core Copyright (C) 2014 Matthew Vilim
+ *
+ * src/cpu/instr_calc_addr.c
+ */
+
+dword_t
+instr_calc_addr16_base(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_w(cpu, instr->modrm.m.base);
+}
+
+dword_t
+instr_calc_addr16_offset(const cpu_t *cpu, const instr_t *instr) {
+    return instr->modrm.m.disp16;
+}
+
+dword_t
+instr_calc_addr16_base_offset(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_w(cpu, instr->modrm.m.base) + instr->modrm.m.disp16;
+}
+
+dword_t
+instr_calc_addr16_base_index(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_w(cpu, instr->modrm.m.base) +
+           cpu_gen_read_w(cpu, instr->modrm.m.index);
+}
+
+dword_t
+instr_calc_addr16_base_index_offset(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_w(cpu, instr->modrm.m.base) +
+           cpu_gen_read_w(cpu, instr->modrm.m.index) +
+                          instr->modrm.m.disp16;
+}
+
+dword_t
+instr_calc_addr32_base(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_dw(cpu, instr->modrm.m.base);
+}
+
+dword_t
+instr_calc_addr32_offset(const cpu_t *cpu, const instr_t *instr) {
+    return instr->modrm.m.disp32;
+}
+
+dword_t
+instr_calc_addr32_base_offset(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_dw(cpu, instr->modrm.m.base) + instr->modrm.m.disp32;
+}
+
+dword_t
+instr_calc_addr32_scale_index_base(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_dw(cpu, instr->modrm.m.base) +
+          (cpu_gen_read_dw(cpu, instr-modrm.m.index) << instr->modrm.m.scale);
+}
+
+dword_t
+instr_calc_addr32_scale_index_offset(const cpu_t *cpu, const instr_t *instr) {
+    return (cpu_gen_read_dw(cpu, instr-modrm.m.index) << instr->modrm.m.scale) +
+            instr->modrm.m.disp32;
+}
+
+dword_t
+instr_calc_addr32_scale_index_base_offset(const cpu_t *cpu, const instr_t *instr) {
+    return cpu_gen_read_dw(cpu, instr->modrm.m.base) +
+          (cpu_gen_read_dw(cpu, instr-modrm.m.index) << instr->modrm.m.scale) +
+           instr->modrm.m.disp32;
+}

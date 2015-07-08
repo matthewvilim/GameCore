@@ -48,6 +48,15 @@
 /****************************
  * INSTRUCTION FIELD VALUES *
  ****************************/
+// general registers (32 bit)
+#define X86_REG_EAX 0x0
+#define X86_REG_ECX 0x1
+#define X86_REG_EDX 0x2
+#define X86_REG_EBX 0x3
+#define X86_REG_ESP 0x4
+#define X86_REG_EBP 0x5
+#define X86_REG_ESI 0x6
+#define X86_REG_EDI 0x7
 // general registers (16 bit)
 #define X86_REG_AX 0x0
 #define X86_REG_CX 0x1
@@ -72,31 +81,6 @@
 #define X86_REG_SS 0x2
 #define X86_REG_DS 0x3
 
-// MOD - Mode
-#define X86_MOD_NO_DISP    0x0
-#define X86_MOD_B_DISP     0x1
-#define X86_MOD_W_DISP     0x2
-#define X86_MOD_REG        0x3
-// R/M - Register/Memory
-// MOD = 0x0, 0x1, 0x2
-#define X86_INSTR_RM_BX_PLUS_SI    0x0
-#define X86_INSTR_RM_BX_PLUS_DI    0x1
-#define INSTR_RM_BP_PLUS_SI        0x2
-#define INSTR_RM_BP_PLUS_DI        0x3
-#define INSTR_RM_SI                0x4
-#define INSTR_RM_DI                0x5
-#define INSTR_RM_BP_OR_DIR_ADDR    0x6
-#define INSTR_RM_BX                0x7
-// MOD = 0x3
-#define INSTR_RM_AL_AX    0x0
-#define INSTR_RM_CL_CX    0x1
-#define INSTR_RM_DL_DX    0x2
-#define INSTR_RM_BL_BX    0x3
-#define INSTR_RM_AH_SP    0x4
-#define INSTR_RM_CH_BP    0x5
-#define INSTR_RM_DH_SI    0x6
-#define INSTR_RM_BH_DI    0x7
-
 #define INSTR_FLAGS_SEG_PREFIX     BIT(0)
 #define INSTR_FLAGS_OP_SIZE_MASK   BIT(1)
 #define INSTR_FLAGS_ADDR_SIZE_MASK BIT(2)
@@ -106,7 +90,6 @@ typedef uint16_t word_t;
 typedef uint32_t dword_t;
 
 typedef struct operand {
-    addr_calc_t addr_calc;
     uint8_t seg;
     union {
 
@@ -118,37 +101,36 @@ typedef struct operand {
     };
 } operand_t;
 
-typedef struct modrm {
-    uint8_t scale;
-    union {
-        uint8_t index;
-    }
-    union {
-        uint8_t base;
-    }
-    union {
-        int16_t disp16;
-        int32_t disp32;
-    };
-} modrm_t;
-
 typedef struct instr {
     byte_t *opcode;
 
     uint8_t len;
 
-    modrm_t modrm;
-    size_t modrm_len;
+    struct modrm {
+        uint8_t reg;
+        union {
+            uint8_t r;
+            struct m {
+                uint8_t scale;
+                uint8_t index;
+                uint8_t base;
+                union {
+                    int16_t disp16;
+                    int32_t disp32;
+                };
+            };
+        };
+    };
 
     byte_t instr_prefix;
 
     uint8_t flags;
 
-    operand_t op1, op2;
+    instr_calc_addr_t calc_addr;
     instr_exe_t exe;
 } instr_t;
 
-
+typedef void (*instr_calc_addr_t)(const cpu_t *cpu, const instr_t *instr);
 typedef void (*instr_exe_t)(cpu_t *cpu, instr_t *instr);
 
 typedef struct op_group {
@@ -165,6 +147,14 @@ typedef struct op_info {
     instr_exe_t exe;
 
 } op_info_t;
+
+typedef struct modrm_info {
+    calc_addr_t calc_addr;
+    uint8_t base;
+    uint8_t index;
+    uint8_t disp_size;
+    bool sib;
+} modrm_info_t;
 
 extern op_group_t add;
 
