@@ -8,9 +8,8 @@
 #define INSTR
 
 /******************
- * REGISTER MASKS *
+ * Register Masks *
  ******************/
-
 #define X86_FLAG_MASK_CF      BIT(0)
 #define X86_FLAG_MASK_RES0    BIT(1)
 #define X86_FLAG_MASK_PF      BIT(2)
@@ -26,15 +25,18 @@
 #define X86_FLAG_MASK_RES3    MASK_RANGE(15, 12)
 
 /*********************
- * INSTRUCTION MASKS *
+ * Instruction Masks *
  *********************/
-
 #define X86_MODRM_MOD_MASK     MASK_RANGE(7, 6)
 #define X86_MODRM_REG_MASK     MASK_RANGE(5, 3)
 #define X86_MODRM_RM_MASK      MASK_RANGE(2, 0)
 
+#define X86_SIB_SS_MASK     MASK_RANGE(7, 6)
+#define X86_Base_REG_MASK     MASK_RANGE(5, 3)
+#define X86_MODRM_RM_MASK      MASK_RANGE(2, 0)
+
 /************
- * PREFIXES *
+ * Prefixes *
  ************/
 #define X86_PREFIX_REP            0xF3
 #define X86_PREFIX_REPE_REPZ      0xF3
@@ -45,10 +47,15 @@
 #define X86_PREFIX_OVERRIDE_DS    0x3E
 #define X86_PREFIX_OVERRIDE_ES    0x26
 
-/****************************
- * INSTRUCTION FIELD VALUES *
- ****************************/
-// general registers (32 bit)
+ /* General Registers
+  *
+  *  31                                   16 15                 8 7                  0
+  * +---------------------------------------+--------------------+--------------------+
+  * |                                      ExX         xH        xX         xL        |
+  * +---------------------------------------+--------------------+--------------------+
+  *
+  */
+
 #define X86_REG_EAX 0x0
 #define X86_REG_ECX 0x1
 #define X86_REG_EDX 0x2
@@ -57,7 +64,7 @@
 #define X86_REG_EBP 0x5
 #define X86_REG_ESI 0x6
 #define X86_REG_EDI 0x7
-// general registers (16 bit)
+
 #define X86_REG_AX 0x0
 #define X86_REG_CX 0x1
 #define X86_REG_DX 0x2
@@ -66,7 +73,7 @@
 #define X86_REG_BP 0x5
 #define X86_REG_SI 0x6
 #define X86_REG_DI 0x7
-// general registers (8 bit)
+
 #define X86_REG_AL 0x0
 #define X86_REG_CL 0x1
 #define X86_REG_DL 0x2
@@ -75,31 +82,63 @@
 #define X86_REG_CH 0x5
 #define X86_REG_DH 0x6
 #define X86_REG_BH 0x7
+
+/* Segment Registers
+ *
+ *  15                                       0
+ * +-----------------------------------------+
+ * |          CS, SS, DS, ES, FS, GS         |
+ * +-----------------------------------------+
+ */
+
 // segment registers
 #define X86_REG_ES 0x0
 #define X86_REG_CS 0x1
 #define X86_REG_SS 0x2
 #define X86_REG_DS 0x3
 
-#define INSTR_FLAGS_SEG_PREFIX     BIT(0)
-#define INSTR_FLAGS_OP_SIZE_MASK   BIT(1)
-#define INSTR_FLAGS_ADDR_SIZE_MASK BIT(2)
+/* Segment Descriptor (8 bytes)
+ *
+ *  31         24 23  22  21  20    19          16 15  14 13 12  11   8 7           0
+ * +-------------+---+---+---+-----+--------------+---+-----+---+------+-------------+
+ * | Base[31:24] | G | D | O | AVL | Limit[19:16] | P | DPL | S | Type | Base[23:16] |
+ * +-------------+---+---+---+-----+--------------+---+-----+---+------+-------------+
+ *
+ *  31                                   16 15                                      0
+ * +---------------------------------------+-----------------------------------------+
+ * |               Base[15:0]              |              Limit[15:0]                |
+ * +---------------------------------------+-----------------------------------------+
+ */
+
+#define X86_SEG_DESC_MASK_BASE_23_16    MASK_RANGE(7, 0)
+#define X86_SEG_DESC_MASK_TYPE          MASK_RANGE(11, 8)
+#define X86_SEG_DESC_MASK_S             BIT(12)
+#define X86_SEG_DESC_MASK_DPL           MASK_RANGE(14, 13)
+#define X86_SEG_DESC_MASK_P             BIT(15)
+#define X86_SEG_DESC_MASK_LIMIT         MASK_RANGE(19, 16)
+#define X86_SEG_DESC_MASK_AVL           BIT(20)
+#define X86_SEG_DESC_MASK_O             BIT(21)
+#define X86_SEG_DESC_MASK_D             BIT(22)
+#define X86_SEG_DESC_MASK_G             BIT(23)
+#define X86_SEG_DESC_MASK_BASE_31_24    MASK_RANGE(31, 24)
+#define X86_SEG_DESC_MASK_LIMIT_15_0    MASK_RANGE(15, 0)
+#define X86_SEG_DESC_MASK_BASE_15_0     MASK_RANGE(31, 16)
+
+/* Segment Selector
+ *
+ *  15                           3  2   1   0
+ * +------------------------------+----+-----+
+ * |             Index            | TI | RPL |
+ * +------------------------------+----+-----+
+ */
+
+#define X86_SEG_SELECTOR_MASK_RPL      MASK_RANGE(1, 0)
+#define X86_SEG_SELECTOR_MASK_TI       BIT(2)
+#define X86_SEG_SELECTOR_MASK_INDEX    MASK_RANGE(15, 3)
 
 typedef uint8_t byte_t;
 typedef uint16_t word_t;
 typedef uint32_t dword_t;
-
-typedef struct operand {
-    uint8_t seg;
-    union {
-
-    }
-    union {
-        byte_t *b;
-        word_t *w;
-        dword_t *dw;
-    };
-} operand_t;
 
 typedef struct instr {
     byte_t *opcode;
@@ -124,7 +163,11 @@ typedef struct instr {
 
     byte_t instr_prefix;
 
-    uint8_t flags;
+    struct flags {
+        unsigned int seg_prefix : 1;
+        unsigned int op_size : 1;
+        unsigned int addr_size;
+    }
 
     instr_calc_addr_t calc_addr;
     instr_exe_t exe;

@@ -6,10 +6,7 @@ const op_info_t op_info_table[] = {
 }
 
 modrm16_info modrm16_info_table[] {
-    /***********
-     * MOD 0x0 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -18,7 +15,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_offset, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = 0 },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -27,7 +24,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_offset, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = 0 },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -36,7 +33,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_offset, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = 0 },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -45,7 +42,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_offset, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = 0 },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x4 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -54,7 +51,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_offset, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = 0 },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -63,7 +60,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_offset, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = 0 },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, disp_size = 0 },
@@ -72,7 +69,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, disp_size = 0 },
     { .calc_addr = calc_addr16_offset, disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, disp_size = 0 },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -81,11 +78,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = 0 },
     { .calc_addr = calc_addr16_offset, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = 0 },
-
-    /***********
-     * MOD 0x1 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -94,7 +87,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -103,7 +96,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -112,7 +105,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -121,7 +114,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x1 : eg 0x4 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -130,7 +123,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -139,7 +132,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -148,7 +141,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(byte_t) },
@@ -157,11 +150,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(byte_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(byte_t) },
-
-    /***********
-     * MOD 0x2 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -170,7 +159,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -179,7 +168,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -188,7 +177,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -197,7 +186,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x4 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -206,7 +195,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -215,7 +204,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -224,7 +213,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = sizeof(word_t) },
@@ -233,11 +222,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = calc_addr16_base, .base = X86_REG_DI, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base,.base = X86_REG_BP, .disp_size = sizeof(word_t) },
     { .calc_addr = calc_addr16_base, .base = X86_REG_BX, .disp_size = sizeof(word_t) },
-
-    /***********
-     * MOD 0x3 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -246,7 +231,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -255,7 +240,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -264,7 +249,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -273,7 +258,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x4 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -282,7 +267,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -291,7 +276,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -300,7 +285,7 @@ modrm16_info modrm16_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -312,10 +297,7 @@ modrm16_info modrm16_info_table[] {
 }
 
 modrm32_info_t modrm_info_table[] {
-    /***********
-     * MOD 0x0 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -324,7 +306,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -333,7 +315,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -342,7 +324,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -351,7 +333,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x4 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -360,7 +342,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -369,7 +351,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -378,7 +360,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x0 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
@@ -387,11 +369,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
     { .calc_addr = calc_addr32_base, .disp_size = 0, .sib = false },
-
-    /***********
-     * MOD 0x1 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -400,7 +378,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -409,7 +387,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -418,7 +396,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -427,7 +405,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x4 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -436,7 +414,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -445,7 +423,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -454,7 +432,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x1 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
@@ -463,11 +441,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(byte_t), .sib = false },
-
-    /***********
-     * MOD 0x2 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -476,7 +450,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -485,7 +459,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -494,7 +468,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -503,7 +477,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x4 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -512,7 +486,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -521,7 +495,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -530,7 +504,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x2 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
@@ -539,11 +513,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
     { .calc_addr = calc_addr32_base_offset, .disp_size = sizeof(dword_t), .sib = false },
-
-    /***********
-     * MOD 0x3 *
-     ***********/
-    // Reg 0x0 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -552,7 +522,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x1 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x1 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -561,7 +531,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x2 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x2 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -570,7 +540,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x3 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x3 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -579,7 +549,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x4 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x4 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -588,7 +558,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x5 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x5 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -597,7 +567,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x6 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x6 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
@@ -606,7 +576,7 @@ modrm32_info_t modrm_info_table[] {
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },
-    // Reg 0x7 : R/M 0x0-0x7
+    // Mod 0x3 : Reg 0x7 : R/M 0x0-0x7
     { .calc_addr = NULL },
     { .calc_addr = NULL },
     { .calc_addr = NULL },

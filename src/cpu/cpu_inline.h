@@ -23,16 +23,34 @@ typedef struct tlb_entry {
     uint8_t permission;
 } tlb_entry_t;
 
+typedef struct gdt_desc {
+    dword_t dword[2];
+} gdt_desc_t;
+
 typedef struct cpu {
     struct reg_file {
         // general purpose registers
         dword_t gen[8];
         // segment registers
+        struct seg {
+            word_t selector;
+            gdt_desc_t descriptor;
+        }[6];
         word_t seg[6];
         // instruction pointer
         dword_t eip;
         // flags
         dword_t eflags;
+        // Global Descriptor Table register
+        struct gdtr {
+            word_t size;
+            addr_lin_t offset;
+        };
+        // Local Descriptor Table register
+        struct ldtr {
+            word_t size;
+            addr_virt_t offset;
+        };
     };
 
     mem_t *mem;

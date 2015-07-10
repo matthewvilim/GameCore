@@ -42,6 +42,7 @@ typedef struct addr_seg_offset {
     dword_t offset;
 } addr_seg_offset_t;
 
+typedef dword_t addr_lin_t;
 typedef dword_t addr_virt_t;
 typedef dword_t addr_phys_t;
 
