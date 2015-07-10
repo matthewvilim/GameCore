@@ -17,8 +17,7 @@
 #define MASK_TLB_TAG        MASK_RANGE(31, TLB_SIZE_LOG2 + PAGE_SIZE_LOG2)
 
 typedef struct tlb_entry {
-    addr_virt_t phys;
-    addr_phys_t virt;
+    addr_virt_t phys, virt;
     byte_t *host;
     uint8_t permission;
 } tlb_entry_t;
@@ -27,26 +26,25 @@ typedef struct gdt_desc {
     dword_t dword[2];
 } gdt_desc_t;
 
+typedef struct tss32 {
+    dword_t link, esp0, ss0, esp1, ss1, esp2, ss2, cr3, eip, eflags, gen[8], seg[6], io_map_base;
+} tss32_t;
+
+typedef struct tss16 {
+    word_t link, sp0, ss0, sp1, ss1, sp2, ss2, cr3, ip, flags, gen[8], seg[6], io_map_base;
+} tss16_t;
+
 typedef struct cpu {
     struct reg_file {
-        // general purpose registers
-        dword_t gen[8];
-        // segment registers
-        struct seg {
-            word_t selector;
-            gdt_desc_t descriptor;
-        }[6];
-        word_t seg[6];
-        // instruction pointer
+        dword_t gen[8], eip, eflags;
+        word_t seg[6], tr;
         dword_t eip;
-        // flags
-        dword_t eflags;
-        // Global Descriptor Table register
+
         struct gdtr {
             word_t size;
             addr_lin_t offset;
         };
-        // Local Descriptor Table register
+
         struct ldtr {
             word_t size;
             addr_virt_t offset;
@@ -62,86 +60,102 @@ typedef struct cpu {
 // EIP
 C86_INLINE dword_t
 cpu_eip_read(const cpu_t *cpu) {
+    ASSERT(cpu);
     return cpu->reg_file.eip, MASK_DW;
 }
 
 C86_INLINE word_t
 cpu_ip_read(const cpu_t *cpu) {
+    ASSERT(cpu);
     return BIT_FIELD_READ(cpu->reg_file.eip, MASK_LOW_W);
 }
 
 C86_INLINE void
 cpu_eip_write(cpu_t *cpu, dword_t val) {
+    ASSERT(cpu);
     cpu->reg_file.eip = val;
 }
 
 C86_INLINE void
 cpu_ip_write(cpu_t *cpu, word_t val) {
+    ASSERT(cpu);
     BIT_FIELD_WRITE(cpu->reg_file.eip, MASK_LOW_W, val);
 }
 
 // EFLAGS
 C86_INLINE dword_t
 cpu_eflags_read(const cpu_t *cpu) {
+    ASSERT(cpu);
     return cpu->reg_file.eflags;
 }
 
 C86_INLINE word_t
 cpu_flags_read(const cpu_t *cpu) {
+    ASSERT(cpu);
     return BIT_FIELD_READ(cpu->reg_file.eflags, MASK_LOW_W);
 }
 
 C86_INLINE void
 cpu_eflags_write(cpu_t *cpu, dword_t val) {
+    ASSERT(cpu);
     cpu->reg_file.eflags = val;
 }
 
 C86_INLINE void
 cpu_flags_write(cpu_t *cpu, word_t val) {
+    ASSERT(cpu);
     BIT_FIELD_WRITE(cpu->reg_file.eflags, MASK_LOW_W, val);
 }
 
 // general registers
 C86_INLINE byte_t
 cpu_gen_read_b(const cpu_t *cpu, const uint8_t reg) {
+    ASSERT(cpu);
     dword_t mask = reg & BIT(2) ? MASK_LOW_B : MASK_HIGH_B;
     return BIT_FIELD_READ(cpu->reg_file.gen[reg & ~BIT(2)], mask);
 }
 
 C86_INLINE word_t
 cpu_gen_read_w(const cpu_t *cpu, const uint8_t reg) {
+    ASSERT(cpu);
     return BIT_FIELD_READ(cpu->reg_file.gen[reg], MASK_LOW_W);
 }
 
 C86_INLINE dword_t
 cpu_gen_read_dw(const cpu_t *cpu, const uint8_t reg) {
+    ASSERT(cpu);
     return cpu->reg_file.gen[reg];
 }
 
 C86_INLINE void
 cpu_gen_write_b(cpu_t *cpu, const uint8_t reg, byte_t val) {
+    ASSERT(cpu);
     dword_t mask = reg & BIT(2) ? MASK_LOW_B : MASK_HIGH_B;
     BIT_FIELD_WRITE(cpu->reg_file.gen[reg & ~BIT(2)], mask, val);
 }
 
 C86_INLINE void
 cpu_gen_write_w(cpu_t *cpu, const uint8_t reg, word_t val) {
+    ASSERT(cpu);
     BIT_FIELD_WRITE(cpu->reg_file.gen[reg], MASK_LOW_W, val);
 }
 
 C86_INLINE void
 cpu_gen_write_dw(cpu_t *cpu, const uint8_t reg, dword_t val) {
+    ASSERT(cpu);
     cpu->reg_file.gen[reg] = val;
 }
 
 // segment registers
 C86_INLINE word_t
 cpu_seg_read(const cpu_t *cpu, const uint8_t reg) {
+    ASSERT(cpu);
     return cpu->reg_file.seg[reg];
 }
 
 C86_INLINE void
 cpu_seg_write(cpu_t *cpu, const uint8_t reg, word_t val) {
+    ASSERT(cpu);
     cpu->reg_file.seg[reg] = val;
 }
 

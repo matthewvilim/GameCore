@@ -10,6 +10,8 @@
 
 void
 instr_exe_add_Eb_Gb(cput_t *cpu, const instr_t *instr) {
+    ASSERT(cpu && instr);
+    
     addr_seg_offset_t addr;
     byte_t op1 = _operand_read_Eb(cpu, instr, &addr);
     byte_t op2 = _operand_read_Gb(cpu, instr);

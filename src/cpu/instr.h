@@ -10,9 +10,9 @@
 /* EFLAGS
 *
 *  31   18  17   16  15   14  13  12  11   10   9    8    7    6   5    4   3    2    1   0
-* +-- ~ --+----+----+---+----+------+----+----+----+----+----+----+---+----+---+----+---+----+
+* +--/~/--+----+----+---+----+------+----+----+----+----+----+----+---+----+---+----+---+----+
 * |   -   | VM | RF | 0 | NT | IOPL | OF | DF | IF | TF | SF | ZF | - | AF | - | PF | - | CF |
-* +-- ~ --+----+----+---+----+------+----+----+----+----+----+----+---+----+---+----+---+----+
+* +--/~/--+----+----+---+----+------+----+----+----+----+----+----+---+----+---+----+---+----+
 */
 #define X86_EFLAGS_MASK_CF      BIT(0)
 #define X86_EFLAGS_MASK_RES0    BIT(1)
@@ -152,18 +152,16 @@ typedef uint16_t word_t;
 typedef uint32_t dword_t;
 
 typedef struct instr {
-    byte_t *opcode;
-
-    uint8_t len;
+    uint8_t len : 4;
 
     struct modrm {
-        uint8_t reg;
+        uint8_t reg : 3;
         union {
-            uint8_t r;
+            uint8_t r : 3;
             struct m {
-                uint8_t scale;
-                uint8_t index;
-                uint8_t base;
+                uint8_t scale : 2;
+                uint8_t index : 3;
+                uint8_t base : 3;
                 union {
                     int16_t disp16;
                     int32_t disp32;
@@ -175,9 +173,9 @@ typedef struct instr {
     byte_t instr_prefix;
 
     struct flags {
-        unsigned int seg_prefix : 1;
-        unsigned int op_size : 1;
-        unsigned int addr_size;
+        uint8_t seg_prefix : 1;
+        uint8_t op_size : 1;
+        uint8_t addr_size : 1;
     }
 
     instr_calc_addr_t calc_addr;

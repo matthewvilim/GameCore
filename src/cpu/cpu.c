@@ -8,7 +8,7 @@
 
 gc_error_t
 cpu_init(cpu_t *cpu, mem_t *mem) {
-    if (!cpu) return GC_ARG_ERROR;
+    ASSERT(cpu && mem);
 
     cpu->mem = mem;
 
@@ -20,7 +20,7 @@ cpu_init(cpu_t *cpu, mem_t *mem) {
 
 gc_error_t
 cpu_terminate(cpu_t *cpu) {
-    if (!cpu) return GC_ARG_ERROR;
+    ASSERT(cpu);
 
     cpu->mem = NULL;
 

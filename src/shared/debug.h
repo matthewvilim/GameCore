@@ -45,12 +45,16 @@
  * ASSERT *
  **********/
 
-#define ASSERT(cond, msg, ...)                      \
+#if DEBUG
+# define ASSERT(cond, msg, ...)                      \
     do {                                            \
         if (!(cond)) {                              \
-            LOG_STDERR("ABORT", msg, ##__VA_ARGS__) \
+            ERROR("assertion: " #cond, msg, ##__VA_ARGS__) \
             abort();                                \
         }                                           \
     } while(0);
+#else
+# define ASSERT(cond, msg, ...)
+#endif
 
 #endif
