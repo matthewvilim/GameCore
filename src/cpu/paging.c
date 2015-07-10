@@ -8,7 +8,7 @@
 #define MASK_TLB_TAG        MASK_RANGE(31, TLB_SIZE_LOG2 + PAGE_SIZE_LOG2)
 
 GC_INLINE void
-tlb_offset(addr_virt_t addr) {
+_tlb_offset(addr_virt_t addr) {
     return BIT_FIELD_READ(addr, MASK_TLB_OFFSET);
 }
 

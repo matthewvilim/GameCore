@@ -12,6 +12,9 @@ cpu_init(cpu_t *cpu, mem_t *mem) {
 
     cpu->mem = mem;
 
+    cpu->tlb.entries = malloc(sizeof(tlb_entry_t) * TLB_SIZE);
+
+
     return GC_NO_ERROR;
 }
 
@@ -20,6 +23,8 @@ cpu_terminate(cpu_t *cpu) {
     if (!cpu) return GC_ARG_ERROR;
 
     cpu->mem = NULL;
+
+    free(cpu->tlb.entries);
 
     return GC_NO_ERROR;
 }

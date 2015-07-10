@@ -4,17 +4,10 @@
  * src/shared/macros.h
  */
 
-#include <stdlib.h>
+#ifndef CPU_INLINE_H
+#define CPU_INLINE_H
 
-#ifndef CPU_H
-#define CPU_H
-
-/*  31     22 21       12 11     0
- * +---------+-----------+--------+
- * | tlb tag | tlb index | offset |
- * +---------+-----------+--------+
- *   10 bits    10 bits    12 bits
-*/
+#include "cpu.h"
 
 #define PAGE_SIZE_LOG2      12
 #define TLB_SIZE_LOG2       10
@@ -44,7 +37,7 @@ typedef struct cpu {
 
     mem_t *mem;
     typedef struct tlb {
-        tlb_entry_t entries[TLB_SIZE];
+        tlb_entry_t *entries;
     };
 } cpu_t;
 
