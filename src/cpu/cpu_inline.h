@@ -52,6 +52,7 @@ typedef struct cpu {
     };
 
     mem_t *mem;
+
     typedef struct tlb {
         tlb_entry_t *entries;
     };
