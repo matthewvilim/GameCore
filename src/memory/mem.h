@@ -7,18 +7,12 @@
 #ifndef MEM_H
 #define MEM_H
 
-#define MEM_ADDRESSABILITY_BYTES     1
-#define MEM_SEGMENT_ADDRESS_SPACE    (1 << 16) // 64 KB
-#define MEM_MASK_SEGMENT_ADDRESS     (MEM_SEGMENT_ADDRESS_SPACE - 1)
-#define MEM_LINEAR_ADDRESS_SPACE     (1 << 20) // 1 MB
-#define MEM_MASK_LINEAR_ADDRESS      (MEM_LINEAR_ADDRESS_SPACE - 1)
-
-typedef byte_t (*mem_read_b_t)(const cpu_t *cpu, const addr_seg_offset_t addr);
-typedef word_t (*mem_read_w_t)(const cpu_t *cpu, const addr_seg_offset_t addr);
-typedef dword_t (*mem_read_dw_t)(const cpu_t *cpu, const addr_seg_offset_t addr);
-typedef void (*mem_write_b_t)(const cpu_t *cpu, const addr_seg_offset_t addr, const byte_t val);
-typedef void (*mem_write_w_t)(const cpu_t *cpu, const addr_seg_offset_t addr, const word_t val);
-typedef void (*mem_write_dw_t)(const cpu_t *cpu, const addr_seg_offset_t addr, const dword_t val);
+typedef ubyte_t (*mem_read_b_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr);
+typedef uword_t (*mem_read_w_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr);
+typedef udword_t (*mem_read_dw_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr);
+typedef void (*mem_write_b_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr, const ubyte_t val);
+typedef void (*mem_write_w_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr, const uword_t val);
+typedef void (*mem_write_dw_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr, const udword_t val);
 
 typedef struct mem_handler_read {
     mem_read_b_t b;
@@ -37,17 +31,12 @@ extern const mem_handler_write_t mem_real_write;
 extern const mem_handler_read_t mem_protected_read;
 extern const mem_handler_write_t mem_protected_write;
 
-typedef struct addr_seg_offset {
-    uint8_t seg;
-    dword_t offset;
-} addr_seg_offset_t;
-
-typedef dword_t addr_lin_t;
-typedef dword_t addr_virt_t;
-typedef dword_t addr_phys_t;
+typedef udword_t addr_virt_t;
+typedef udword_t addr_lin_t;
+typedef udword_t addr_phys_t;
 
 typedef struct mem {
-    byte_t *base;
+    ubyte_t *base;
 
     mem_handler_read_t read;
     mem_handler_write_t write;

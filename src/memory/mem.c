@@ -59,62 +59,62 @@ c86_status_t mem_delete(mem_t *mem) {
     return GC_NO_ERROR;
 }
 
-byte_t
+ubyte_t
 _protected_read_b(const cpu_t *cpu) {
 
 }
 
-word_t
+uword_t
 _protected_read_w(const cpu_t *cpu) {
 
 }
 
-dword_t
+udword_t
 _protected_read_dw(const cpu_t *cpu) {
 
 }
 
 void
-_protected_write_b(const cpu_t *cpu, const byte_t val) {
+_protected_write_b(const cpu_t *cpu, const ubyte_t val) {
 
 }
 
 void
-_protected_write_w(const cpu_t *cpu, const word_t val) {
+_protected_write_w(const cpu_t *cpu, const uword_t val) {
 
 }
 
 void
-_protected_write_dw(const cpu_t *cpu, const dword_t val) {
+_protected_write_dw(const cpu_t *cpu, const udword_t val) {
 
 }
 
-byte_t
+ubyte_t
 _real_read_b(const cpu_t *cpu) {
 
 }
 
-word_t
+uword_t
 _real_read_w(const cpu_t *cpu) {
 
 }
 
-dword_t
+udword_t
 _real_read_dw(const cpu_t *cpu) {
 
 }
 
 void
-_real_write_b(const cpu_t *cpu, const byte_t val) {
+_real_write_b(const cpu_t *cpu, const ubyte_t val) {
 
 }
 
 void
-_real_write_w(const cpu_t *cpu, const word_t val) {
+_real_write_w(const cpu_t *cpu, const uword_t val) {
 
 }
 
 void
-_real_write_dw(const cpu_t *cpu, const dword_t val) {
+_real_write_dw(const cpu_t *cpu, const udword_t val) {
 
 }
