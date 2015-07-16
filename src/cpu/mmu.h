@@ -7,7 +7,7 @@
 #ifndef MMU_H
 #define MMU_H
 
-GC_INLINE void
+INLINE_FORCE void
 mmu_cache_seg_desc(cpu_t *cpu, uint8_t seg) {
 
 }

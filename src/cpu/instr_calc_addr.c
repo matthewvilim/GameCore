@@ -6,32 +6,32 @@
 
 #include "cpu_inline.h"
 
-GC_INLINE addr_virt_t
+INLINE_FORCE addr_virt_t
 _addr16_base(const cpu_t *cpu, const instr_t *instr) {
     return cpu_gen_read_w(cpu, instr->modrm.m.base);
 }
 
-GC_INLINE addr_virt_t
+INLINE_FORCE addr_virt_t
 _addr16_index(const cpu_t *cpu, const instr_t *instr) {
     return cpu_gen_read_w(cpu, instr->modrm.m.index);
 }
 
-GC_INLINE addr_virt_t
+INLINE_FORCE addr_virt_t
 _addr16_offset(const instr_t *instr) {
     return instr->modrm.m.disp16;
 }
 
-GC_INLINE addr_virt_t
+INLINE_FORCE addr_virt_t
 _addr32_base(const cpu_t *cpu, const instr_t *instr) {
     return cpu_gen_read_dw(cpu, instr->modrm.m.base);
 }
 
-GC_INLINE addr_virt_t
+INLINE_FORCE addr_virt_t
 _addr32_index(const cpu_t *cpu, const instr_t *instr) {
     return cpu_gen_read_dw(cpu, instr-modrm.m.index) << instr->modrm.m.scale;
 }
 
-GC_INLINE addr_virt_t
+INLINE_FORCE addr_virt_t
 _addr32_offset(const instr_t *instr) {
     return instr->modrm.m.disp32;
 }

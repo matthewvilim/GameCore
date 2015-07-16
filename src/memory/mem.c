@@ -6,115 +6,47 @@
 
 #include "mem.h"
 
-const mem_real_read = {
-    .b  = _real_read_b,
-    .w  = _real_read_w,
-    .dw = _real_read_dw
-}
+gc_error_t
+mem_init(mem_t *mem, mem_conf_t *conf) {
+    ASSERT(mem && conf);
+    mem->size_mb = conf->size_mb;
 
-const mem_real_write = {
-    .b  = _real_write_b,
-    .w  = _real_write_w,
-    .dw = _real_write_dw
-}
-
-const mem_protected_read = {
-    .b  = _protected_read_b,
-    .w  = _protected_read_w,
-    .dw = _protected_read_dw
-}
-
-const mem_protected_write = {
-    .b  = _protected_write_b,
-    .w  = _protected_write_w,
-    .dw = _protected_write_dw
-}
-
-GC_INLINE void *
-mem_addr16_host(mem_t *mem, const addr16_t lin_addr) {
-    return mem->base + mem_addr16_calc(lin_addr);
-}
-
-GC_INLINE size_t
-mem_addr16_calc(const addr16_t lin_addr) {
-    return ((lin_addr.base << 4) + lin_addr.offset) & MEM_MASK_LINEAR_ADDRESS;
-}
-
-
-
-c86_status_t mem_init(mem_t *mem) {
-    if (!mem) return GC_ARG_ERROR;
-
-    mem->base = malloc(MEM_PHYS_ADDR_SPACE * MEM_ADDRESSABILITY_BYTES);
-
-    if (!mem->base) return C86_MALLOC_ERROR;
+    mem->block_table = malloc(mem->size_mb * sizeof(ubyte_t *));
+    for (size_t i = 0; i < mem->size_mb; i += MEM_BLOCK_SIZE_MBYTES) {
+        mem->block_table[i] = NULL;
+    }
+    if (!mem->block_table) return C86_NO_MEM_ERROR;
 
     return GC_NO_ERROR;
 }
 
-c86_status_t mem_delete(mem_t *mem) {
-    if (!mem) return GC_ARG_ERROR;
+gc_error_t
+mem_delete(mem_t *mem) {
+    ASSERT(mem);
 
-    free(mem->base);
+    for (size_t i = 0; i < mem->size_mb; i += MEM_BLOCK_SIZE_MBYTES) {
+        mem_release_block(mem, i);
+    }
+    free(mem->block_table);
+    mem->block_table = NULL;
     return GC_NO_ERROR;
 }
 
-ubyte_t
-_protected_read_b(const cpu_t *cpu) {
-
-}
-
-uword_t
-_protected_read_w(const cpu_t *cpu) {
-
-}
-
-udword_t
-_protected_read_dw(const cpu_t *cpu) {
-
+void
+mem_alloc_block(mem_t *mem, const size_t index) {
+    ubyte_t *block = malloc(MEM_BLOCK_SIZE_BYTES);
+    if (!block) {
+        ERROR("host memory allocation failed for table: 0x%x block: 0x%x", table_index, block_index);
+    }
+    mem->block_table[index] = block;
 }
 
 void
-_protected_write_b(const cpu_t *cpu, const ubyte_t val) {
-
-}
-
-void
-_protected_write_w(const cpu_t *cpu, const uword_t val) {
-
-}
-
-void
-_protected_write_dw(const cpu_t *cpu, const udword_t val) {
-
-}
-
-ubyte_t
-_real_read_b(const cpu_t *cpu) {
-
-}
-
-uword_t
-_real_read_w(const cpu_t *cpu) {
-
-}
-
-udword_t
-_real_read_dw(const cpu_t *cpu) {
-
-}
-
-void
-_real_write_b(const cpu_t *cpu, const ubyte_t val) {
-
-}
-
-void
-_real_write_w(const cpu_t *cpu, const uword_t val) {
-
-}
-
-void
-_real_write_dw(const cpu_t *cpu, const udword_t val) {
-
+mem_release_block(mem_t *mem, const size_t index) {
+    ubyte_t **block  = mem->block_table + index;
+    if (*block) {
+        INFO("releasing block: 0x%x", index);
+        free(*block);
+        *block = NULL;
+    }
 }

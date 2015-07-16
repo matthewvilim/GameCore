@@ -7,6 +7,10 @@
 #ifndef MACROS_H
 #define MACROS_H
 
+#ifndef __has_builtin
+# define __has_builtin(x) 0
+#endif
+
 /*********************
  * SIZE CALCULATIONS *
  ********************/
@@ -36,11 +40,13 @@
  #define MASK_HIGH_W    MASK_RANGE(31, 16)
  #define MAKS_DW        MASK_RANGE(31, 0)
 
- /*********************
-  * ENDIAN CONVERSION *
-  *********************/
-#ifndef __has_builtin
-# define __has_builtin(x) 0
+/*********************
+ * ENDIAN CONVERSION *
+ *********************/
+#ifdef __BIG_ENDIAN__
+# define ARCH_NATIVE_BIG_ENDIAN     __BIG_ENDIAN__
+#else
+# error native architecture endianness must be defined
 #endif
 
 #if __has_builtin(__builtin_bswap32)
@@ -58,12 +64,23 @@
 # define BYTE_SWAP16(val) ((val >> 8) | (val << 8))
 #endif
 
-#if GC_ARCH_NATIVE_BIG_ENDIAN
+#if ARCH_NATIVE_BIG_ENDIAN
 # define ENDIAN_CONV_DWORD(val)   BYTE_SWAP32(val)
 # define ENDIAN_CONV_WORD(val)    BYTE_SWAP16(val)
 #else
 # define ENDIAN_CONV_DWORD(val)   (val)
 # define ENDIAN_CONV_WORD(val)    (val)
+#endif
+
+#define GBYTES_LOG2(n) (30 + (n))
+#define MBYTES_LOG2(n) (20 + (n))
+#define KBYTES_LOG2(n) (10 + (n))
+
+#if __has_attribute(always_inline)
+# define INLINE_FORCE inline __attribute__((always_inline))
+#else
+# warn functions might not be inlined
+# define INLINE_FORCE inline
 #endif
 
 #endif

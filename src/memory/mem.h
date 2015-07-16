@@ -7,51 +7,77 @@
 #ifndef MEM_H
 #define MEM_H
 
-typedef ubyte_t (*mem_read_b_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr);
-typedef uword_t (*mem_read_w_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr);
-typedef udword_t (*mem_read_dw_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr);
-typedef void (*mem_write_b_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr, const ubyte_t val);
-typedef void (*mem_write_w_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr, const uword_t val);
-typedef void (*mem_write_dw_t)(const cpu_t *cpu, const uint8_t seg, const addr_virt_t addr, const udword_t val);
+#define MEM_PHYS_SIZE_BYTES_LOG2      GBYTES_LOG2(2)
 
-typedef struct mem_handler_read {
-    mem_read_b_t b;
-    mem_read_w_t w;
-    mem_read_dw_t dw;
-} mem_handler_read_t;
+#define MEM_BLOCK_SIZE_BYTES_LOG2     MBYTES_LOG2(0)
+#define MEM_BLOCK_SIZE_BYTES          BIT(MEM_BLOCK_SIZE_LOG2)
+#define MEM_BLOCK_SIZE_MBYTES_LOG2   (MEM_BLOCK_SIZE_BYTES_LOG2 - MBYTES_LOG2(0))
+#define MEM_BLOCK_SIZE_MBYTES         BIT(MEM_BLOCK_SIZE_MBYTES_LOG2)
 
-typedef struct mem_handler_write {
-    mem_write_b_t b;
-    mem_write_w_t w;
-    mem_write_dw_t dw;
-} mem_handler_write_t;
+#define MEM_BLOCK_TABLE_INDEX_MASK    MASK_RANGE(MEM_PHYS_SIZE_BYTES_LOG2 - 1, MEM_BLOCK_SIZE_LOG2)
+#define MEM_BLOCK_INDEX_MASK          MASK_RANGE(MEM_BLOCK_SIZE_LOG2 - 1, 0)
 
-extern const mem_handler_read_t mem_real_read;
-extern const mem_handler_write_t mem_real_write;
-extern const mem_handler_read_t mem_protected_read;
-extern const mem_handler_write_t mem_protected_write;
+typedef struct addr_log {
+    uint8_t seg;
+    uword_t offset;
+} addr_log_t;
+typedef dword_t addr_lin_t;
+typedef dword_t addr_phys_t;
 
-typedef udword_t addr_virt_t;
-typedef udword_t addr_lin_t;
-typedef udword_t addr_phys_t;
+typedef struct mem_conf {
+    size_t size_mb;
+} mem_conf_t;
 
 typedef struct mem {
-    ubyte_t *base;
+    void **block_table;
+    size_t size_mb;
 
     mem_handler_read_t read;
     mem_handler_write_t write;
 } mem_t;
 
-GC_INLINE void
-mem_setup_real(mem_t *mem) {
-    mem->read = mem_real_read;
-    mem->write = mem_real_write;
+gc_error_t mem_init(mem_t *mem, mem_conf_t *conf);
+void mem_alloc_block(mem_t *mem, const size_t index);
+
+static INLINE_FORCE void *
+mem_addr_phys_to_host(mem_t *mem, const addr_phys_t addr) {
+    size_t table_index = BIT_FIELD_READ(addr, MEM_BLOCK_TABLE_INDEX_MASK);
+    size_t block_index = BIT_FIELD_READ(addr, MEM_BLOCK_INDEX_MASK);
+    void **block = mem->block_table + table_index;
+    if (*block) {
+        mem_alloc_block(mem, table_index);
+    }
+    return (ubyte_t *)*block + block_index;
 }
 
-GC_INLINE void
-mem_setup_protected(mem_t *mem) {
-    mem->read = mem_protected_read;
-    mem->write = mem_protected_write;
+static INLINE_FORCE ubyte_t
+mem_addr_phys_read_b(mem_t *mem, const addr_phys_t addr) {
+    return *(ubyte_t *)mem_addr_phys_to_host(mem, addr);
+}
+
+static INLINE_FORCE void
+mem_addr_phys_write_b(mem_t *mem, const addr_phys_t addr, const ubyte_t val) {
+    *(ubyte_t *)mem_addr_phys_to_host(mem, addr) = val;
+}
+
+static INLINE_FORCE uword_t
+mem_addr_phys_read_w(mem_t *mem, const addr_phys_t addr) {
+    return ENDIAN_CONV_WORD(*(word_t *)mem_addr_phys_to_host(mem, addr));
+}
+
+static INLINE_FORCE void
+mem_addr_phys_write_w(mem_t *mem, const addr_phys_t addr, const uword_t val) {
+    *(uword_t *)mem_addr_phys_to_host(mem, addr) = ENDIAN_CONV_WORD(val);
+}
+
+static INLINE_FORCE udword_t
+mem_addr_phys_read_dw(mem_t *mem, const addr_phys_t addr) {
+    return ENDIAN_CONV_DWORD(*(udword_t *)mem_addr_phys_to_host(mem, addr));
+}
+
+static INLINE_FORCE void
+mem_addr_phys_write_dw(mem_t *mem, const addr_phys_t addr, udword_t val) {
+    *(udword_t *)mem_addr_phys_to_host(mem, addr) = ENDIAN_CONV_DWORD(val);
 }
 
 #endif
