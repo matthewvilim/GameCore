@@ -8,7 +8,7 @@
 #define SOCKET_HANDLE_INVALID(handle) (handle == INVALID_SOCKET)
 #define SOCKET_FUNC_ERROR(val) (val == SOCKET_ERROR)
 
-#define SOCKET_HANDLE SOCKET;
+typedef SOCKET socket_handle_t;
 
 #else
 # include <sys/socket.h>
@@ -19,13 +19,13 @@
 #define SOCKET_HANDLE_INVALID(handle) (handle < 0)
 #define SOCKET_FUNC_ERROR(val) (val != 0)
 
-#define SOCKET_HANDLE int;
+typedef int socket_handle_t;
 #endif
 
 #endif
 
 typedef struct socket {
-    SOCKET_HANDLE handle;
+    socket_handle_t handle;
 } socket_t;
 
 socket_init(socket_t *socket);
