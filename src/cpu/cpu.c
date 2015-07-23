@@ -4,7 +4,7 @@
  * src/cpu/cpu.c
  */
 
-#include "cpu.h"
+#include "cpu_c.h"
 
 gc_error_t
 cpu_init(cpu_t *cpu, mem_t *mem) {

@@ -10,18 +10,18 @@
 typedef struct cpu cpu_t;
 typedef struct instr instr_t;
 
-typedef addr_virt_t (*instr_calc_addr_t)(const cpu_t *cpu, const instr_t *instr);
+typedef udword_t (*instr_calc_addr_t)(const cpu_t *cpu, const instr_t *instr);
 
-addr_virt_t instr_calc_addr16_base(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr16_offset(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr16_base_index(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr16_base_offset(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr16_base_index_offset(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr32_base(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr32_offset(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr32_base_index(const cpu_t *cpu, const instr_t *instr;
-addr_virt_t instr_calc_addr32_base_offset(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr32_index_offset(const cpu_t *cpu, const instr_t *instr);
-addr_virt_t instr_calc_addr32_base_index_offset(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr16_base(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr16_offset(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr16_base_index(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr16_base_offset(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr16_base_index_offset(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr32_base(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr32_offset(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr32_base_index(const cpu_t *cpu, const instr_t *instr;
+udword_t instr_calc_addr32_base_offset(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr32_index_offset(const cpu_t *cpu, const instr_t *instr);
+udword_t instr_calc_addr32_base_index_offset(const cpu_t *cpu, const instr_t *instr);
 
 #endif

@@ -7,9 +7,7 @@
 #ifndef MACROS_H
 #define MACROS_H
 
-#ifndef __has_builtin
-# define __has_builtin(x) 0
-#endif
+#include "compiler.h"
 
 /*********************
  * SIZE CALCULATIONS *
@@ -40,15 +38,6 @@
  #define MASK_HIGH_W    MASK_RANGE(31, 16)
  #define MAKS_DW        MASK_RANGE(31, 0)
 
-/*********************
- * ENDIAN CONVERSION *
- *********************/
-#ifdef __BIG_ENDIAN__
-# define ARCH_NATIVE_BIG_ENDIAN     __BIG_ENDIAN__
-#else
-# error native architecture endianness must be defined
-#endif
-
 #if __has_builtin(__builtin_bswap32)
 # define BYTE_SWAP32(val) __builtin_bswap32(val)
 #else
@@ -75,12 +64,5 @@
 #define GBYTES_LOG2(n) (30 + (n))
 #define MBYTES_LOG2(n) (20 + (n))
 #define KBYTES_LOG2(n) (10 + (n))
-
-#if __has_attribute(always_inline)
-# define INLINE_FORCE inline __attribute__((always_inline))
-#else
-# warn functions might not be inlined
-# define INLINE_FORCE inline
-#endif
 
 #endif
