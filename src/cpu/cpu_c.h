@@ -13,11 +13,11 @@
 #include "reg_file.h"
 
 typedef struct seg_desc {
-    udword_t dword[2];
+    udword_t dw[2];
 } seg_desc_t;
 
 typedef struct tss_desc {
-    udword_t dword[2];
+    udword_t dw[2];
 } tss_desc_t;
 
 typedef struct tss32 {

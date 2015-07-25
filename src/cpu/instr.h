@@ -140,7 +140,7 @@
 #define X86_SEG_DESC_MASK_S             BIT(12)
 #define X86_SEG_DESC_MASK_DPL           MASK_RANGE(14, 13)
 #define X86_SEG_DESC_MASK_P             BIT(15)
-#define X86_SEG_DESC_MASK_LIMIT         MASK_RANGE(19, 16)
+#define X86_SEG_DESC_MASK_LIMIT_19_16   MASK_RANGE(19, 16)
 #define X86_SEG_DESC_MASK_AVL           BIT(20)
 #define X86_SEG_DESC_MASK_O             BIT(21)
 #define X86_SEG_DESC_MASK_D             BIT(22)

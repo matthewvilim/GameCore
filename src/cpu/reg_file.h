@@ -21,7 +21,7 @@
 
      struct ldtr {
          uword_t limit;
-         addr_virt_t base;
+         addr_lin_t base;
      };
 
      struct idtr {
