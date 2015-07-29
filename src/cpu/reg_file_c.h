@@ -1,36 +1,38 @@
 /*
  * Core 8086 Copyright (C) 2014 Matthew Vilim
  *
- * src/cpu/reg_file.h
+ * src/cpu/reg_file_c.h
  */
 
- #ifndef REG_FILE_H
- #define REG_FILE_H
+ #ifndef REG_FILE_C_H
+ #define REG_FILE_C_H
 
- typedef struct reg_file {
-     udword_t gen[8], eip, eflags;
+#include "reg_file.h"
 
-     uword_t seg[6];
+typedef struct reg_file {
+    udword_t gen[8], eip, eflags;
 
-     udword_t eip;
+    uword_t seg[6];
 
-     struct gdtr {
-         uword_t size;
-         addr_lin_t base;
-     };
+    udword_t eip;
 
-     struct ldtr {
-         uword_t limit;
-         addr_lin_t base;
-     };
+    struct gdtr {
+        uword_t size;
+        addr_lin_t base;
+    };
 
-     struct idtr {
-         uword_t limit;
-         addr_lin_t base;
-     };
+    struct ldtr {
+        uword_t limit;
+        addr_lin_t base;
+    };
 
-     uword_t cr0, cr1, cr2, cr3, tr;
- } reg_file_t;
+    struct idtr {
+        uword_t limit;
+        addr_lin_t base;
+    };
+
+    uword_t cr0, cr1, cr2, cr3, tr;
+} reg_file_t;
 
 void reg_file_init(cpu_t *cpu);
 
