@@ -10,6 +10,6 @@
 #define CPU_H
 
 gc_error_t cpu_init(cpu_t *cpu, mem_t *mem);
-gc_error_t cpu_terminate(cpu_t *cpu);
+gc_error_t cpu_term(cpu_t *cpu);
 
 #endif

@@ -38,18 +38,9 @@ typedef struct tlb_entry {
 typedef struct cpu {
     reg_file_t reg_file;
     mmu_t mmu;
+    jmp_buf exc_buf;
 
     mem_t *mem;
 } cpu_t;
-
-C86_INLINE bool
-cpu_pe_enabled(const cpu_t *cpu) {
-    return (cpu->reg_file.cr0 & X86_CR0_MASK_PE) != 0;
-}
-
-C86_INLINE bool
-cpu_vm_enabled(const cpu_t *cpu) {
-    return (cpu->reg_file.eflags & X86_EFLAGS_MASK_VM) != 0;
-}
 
 #endif

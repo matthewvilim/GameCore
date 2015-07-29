@@ -12,19 +12,19 @@ cpu_init(cpu_t *cpu, mem_t *mem) {
 
     cpu->mem = mem;
 
-    cpu->tlb.entries = malloc(sizeof(tlb_entry_t) * TLB_SIZE);
-
+    reg_file_init(&cpu->reg_file);
+    mmu_init(&cpu->mmu);
 
     return GC_NO_ERROR;
 }
 
 gc_error_t
-cpu_terminate(cpu_t *cpu) {
+cpu_term(cpu_t *cpu) {
     ASSERT(cpu);
 
     cpu->mem = NULL;
 
-    free(cpu->tlb.entries);
+    mmu_term(cpu->mmu);
 
     return GC_NO_ERROR;
 }
