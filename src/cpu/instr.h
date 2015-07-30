@@ -45,29 +45,6 @@ typedef struct instr {
     instr_exe_t exe;
 } instr_t;
 
-typedef struct op_group {
-    char *name;
-    uint8_t op1_seg;
-    uint8_t op2_seg;
-} op_group_t;
-
-typedef struct op_info {
-    op_group_t *group;
-
-    decode_t decode_op1;
-    decode_t decode_op2;
-    instr_exe_t exe;
-
-} op_info_t;
-
-typedef struct modrm_info {
-    instr_calc_addr_t calc_addr;
-    uint8_t base;
-    uint8_t index;
-    uint8_t disp_size;
-    bool sib;
-} modrm_info_t;
-
 extern op_group_t add;
 
 extern op_info_t add_eb_gb;

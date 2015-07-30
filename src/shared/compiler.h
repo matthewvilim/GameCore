@@ -5,7 +5,7 @@
  */
 
 #ifndef __has_builtin
-# define __has_builtin(expr) 0
+# define __has_builtin(feature) 0
 #endif
 
 #ifdef __BIG_ENDIAN__
