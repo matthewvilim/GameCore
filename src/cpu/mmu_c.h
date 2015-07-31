@@ -9,12 +9,30 @@
 
 #include "mmu.h"
 
+#include "mem_c.h"
+
+typedef struct seg_desc_cache {
+    bool dirty;
+    addr_lin_t base;
+    udword_t limit;
+    uint8_t type, s, dpl, p, avl, db;
+} seg_desc_cache_t;
+
 typedef struct mmu {
+    mem_t *mem;
+
     bool protected, paged;
+    seg_desc_cache_t seg[6];
+
     struct tlb {
         tlb_entry_t *entries;
     };
 } mmu_t;
+
+INLINE_FORCE bool
+mmu_protected(mmu_t *mmu) {
+    return mmu0->protected;
+}
 
 INLINE_FORCE void
 mmu_cache_protected(mmu_t *mmu, reg_file_t *reg_file) {
@@ -27,17 +45,12 @@ mmu_cache_paged(mmu_t *mmu, reg_file_t *reg_file) {
 }
 
 INLINE_FORCE addr_lin_t
-mmu_addr_log_to_lin(mmu_t *mmu, addr_log_t log, reg_file_t *reg_file) {
-    if (mmu->protected) {
-        reg_seg_t *seg = reg_file->seg + addr.seg;
-        if (log.offset < seg->limit) {
-            return seg.base + log.offset;
-        } else {
-            // TODO: do exception
-        }
+mmu_addr_log_to_lin(mmu_t *mmu, addr_log_t log) {
+    seg_desc_cache_t *cache = mmu->seg + log.seg;
+    if (log.offset < cache->limit) {
+        return cache->base + log.offset;
     } else {
-        uword_t seg = reg_file_seg_read(reg_file, log.seg);
-        return ((seg << 4) + log.offset) & MASK_RANGE(X86_MEM_PHYS_BUS_SIZE_8086, 0);
+        // TODO: do exception
     }
 }
 
@@ -51,15 +64,15 @@ mmu_addr_lin_to_phys(mmu_t *mmu, addr_lin_t lin) {
 }
 
 INLINE_FORCE ubyte_t
-mmu_addr_log_read_b(mmu_t *mmu, addr_log_t log, reg_file_t *reg_file, mem_t *mem) {
-    addr_lin_t lin = mmu_addr_log_to_lin(mmu, log, reg_file);
-    return mmu_addr_lin_read_b(mmu, lin, mem);
+mmu_addr_log_read_b(mmu_t *mmu, addr_log_t log) {
+    addr_lin_t lin = mmu_addr_log_to_lin(mmu, log);
+    return mmu_addr_lin_read_b(mmu, lin);
 }
 
 INLINE_FORCE ubyte_t
-mmu_addr_lin_read_b(mmu_t *mmu, addr_lin_t lin, mem_t *mem) {
+mmu_addr_lin_read_b(mmu_t *mmu, addr_lin_t lin) {
     addr_phys_t phys = mmu_addr_lin_to_phys(mmu, lin);
-    return mem_addr_phys_read_b(mem, phys)
+    return mem_addr_phys_read_b(mmu->mem, phys)
 }
 
 #endif

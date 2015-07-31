@@ -7,7 +7,6 @@
 #ifndef X86_H
 #define X86_H
 
-#define X86_MEM_PHYS_BUS_SIZE_8086 20
 #define X86_MEM_PHYS_BUS_SIZE_80386 32
 
 /* ModR/M
@@ -68,6 +67,8 @@
 #define X86_PREFIX_OVERRIDE_SS    0x36
 #define X86_PREFIX_OVERRIDE_DS    0x3E
 #define X86_PREFIX_OVERRIDE_ES    0x26
+
+#define X86_OPCODE_ESCAPE 0x0F
 
 /* General Registers
  *

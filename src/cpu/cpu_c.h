@@ -39,8 +39,6 @@ typedef struct cpu {
     reg_file_t reg_file;
     mmu_t mmu;
     jmp_buf exc_buf;
-
-    mem_t *mem;
 } cpu_t;
 
 #endif

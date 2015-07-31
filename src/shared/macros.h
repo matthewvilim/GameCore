@@ -65,4 +65,8 @@
 #define MBYTES_LOG2(n) (20 + (n))
 #define KBYTES_LOG2(n) (10 + (n))
 
+#define MASK_GBYTES(n) MASK_RANGE(GBYTES_LOG2(n) - 1, 0)
+#define MASK_MBYTES(n) MASK_RANGE(MBYTES_LOG2(n) - 1, 0)
+#define MASK_KBYTES(n) MASK_RANGE(KBYTES_LOG2(n) - 1, 0)
+
 #endif

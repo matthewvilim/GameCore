@@ -10,10 +10,8 @@ gc_error_t
 cpu_init(cpu_t *cpu, mem_t *mem) {
     ASSERT(cpu && mem);
 
-    cpu->mem = mem;
-
     reg_file_init(&cpu->reg_file);
-    mmu_init(&cpu->mmu);
+    mmu_init(&cpu->mmu, mem);
 
     return GC_NO_ERROR;
 }
@@ -21,8 +19,6 @@ cpu_init(cpu_t *cpu, mem_t *mem) {
 gc_error_t
 cpu_term(cpu_t *cpu) {
     ASSERT(cpu);
-
-    cpu->mem = NULL;
 
     mmu_term(cpu->mmu);
 

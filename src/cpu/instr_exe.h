@@ -10,7 +10,7 @@
 typedef struct cpu cpu_t;
 typedef struct instr instr_t;
 
-typedef void (*instr_exe_t)(cpu_t *cpu, const instr_t *instr);
+typedef void instr_exe_t(cpu_t *cpu, const instr_t *instr);
 
 void instr_exe_add_gen_b_gen_b(cput_t *cpu, const instr_t *instr);
 

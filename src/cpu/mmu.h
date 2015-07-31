@@ -9,6 +9,7 @@
 
 #include "cpu.h"
 
-gc_error_t mmu_init(mmu_t *mmu);
+gc_error_t mmu_init(mmu_t *mmu, mem_t *mem);
+void mmu_term(mmu_t *mmu);
 
 #endif
