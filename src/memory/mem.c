@@ -4,7 +4,7 @@
  * src/memory/memory.c
  */
 
-#include "mem.h"
+#include "_mem.h"
 
 gc_error_t
 mem_init(mem_t *mem, mem_conf_t *conf) {

@@ -4,8 +4,8 @@
  * src/mem/mem_c.h
  */
 
-#ifndef MEM_C_H
-#define MEM_C_H
+#ifndef _MEM_H
+#define _MEM_H
 
 #define MEM_BLOCK_SIZE_BYTES_LOG2     MBYTES_LOG2(0)
 #define MEM_BLOCK_SIZE_BYTES          BIT(MEM_BLOCK_SIZE_LOG2)
@@ -46,33 +46,33 @@ mem_addr_phys_to_host(mem_t *mem, const addr_phys_t addr) {
 }
 
 static INLINE_FORCE ubyte_t
-mem_host_read_b(void *host) {
-    return *(ubyte_t *)host;
+mem_host_read_b(ubyte_t *b) {
+    return *b;
 }
 
 static INLINE_FORCE uword_t
-mem_host_read_w(void *host) {
-    return ENDIAN_CONV_WORD(*(uword_t *)host);
+mem_host_read_w(uword_t *w) {
+    return ENDIAN_CONV_WORD(*w);
 }
 
 static INLINE_FORCE udword_t
-mem_host_read_dw(void *host) {
-    return ENDIAN_CONV_DWORD(*(udword_t *)host);
+mem_host_read_dw(udword_t *dw) {
+    return ENDIAN_CONV_DWORD(*dw);
 }
 
 static INLINE_FORCE void
-mem_host_write_b(void *host, ubyte_t val) {
-    *(ubyte_t *)host = val;
+mem_host_write_b(ubyte_t *b, ubyte_t val) {
+    *b = val;
 }
 
 static INLINE_FORCE void
-mem_host_write_w(void *host, uword_t val) {
-    *(uword_t *)host = ENDIAN_CONV_WORD(val);
+mem_host_write_w(uword_t *w, uword_t val) {
+    *w = ENDIAN_CONV_WORD(val);
 }
 
 static INLINE_FORCE void
-mem_host_write_dw(void *host, udword_t val) {
-    *(udword_t *)host = ENDIAN_CONV_DWORD(val);
+mem_host_write_dw(udword_t *dw, udword_t val) {
+    *dw = ENDIAN_CONV_DWORD(val);
 }
 
 static INLINE_FORCE ubyte_t

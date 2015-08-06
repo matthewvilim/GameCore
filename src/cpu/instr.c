@@ -1,12 +1,12 @@
 #include "instr.h"
 
-typedef struct op_class {
+typedef struct _op_class {
     char *name;
     uint8_t op1_seg;
     uint8_t op2_seg;
-} op_class_t;
+} _op_class_t;
 
-typedef struct op_info {
+typedef struct _op_info {
     op_class_t *class;
     union {
         struct {
@@ -16,24 +16,31 @@ typedef struct op_info {
         };
         uint8_t group : 3;
     };
-} op_info_t;
+} _op_info_t;
 
-typedef struct modrm_info {
+typedef struct _modrm_info {
     instr_calc_addr_t *calc_addr;
     uint8_t base, index : 3;
     uint8_t disp_size : 2;
     bool sib : 1;
-} modrm_info_t;
+} _modrm_info_t;
 
-const op_info_t op_table[] = {
+typedef struct _decode {
+    ubyte_t *buf;
+    bool seg_override;
+    ubyte_t prefix_seg;
+    _op_info_t *op_info;
+} _decode_t;
+
+const _op_info_t op_table[] = {
     { .class = class_add; .instr_exe = instr_exe_add_Eb_Gb; .modrm = true; },
 }
 
-const op_info_t op_escape_table[] = {
+const _op_info_t op_escape_table[] = {
     { .instr_exe = instr_exe_add_Eb_Gb }
 }
 
-const op_info_t op_info_group0[] = {
+const _op_info_t op_info_group0[] = {
     { .instr_exe = instr_exe_add_Eb_Gb },
     { .instr_exe = instr_exe_add_Eb_Gb },
     { .instr_exe = instr_exe_add_Eb_Gb },
@@ -44,7 +51,7 @@ const op_info_t op_info_group0[] = {
     { .instr_exe = instr_exe_add_Eb_Gb }
 }
 
-const op_info_t op_info_groups[][] = {
+const _op_info_t op_info_groups[][] = {
     op_info_group0,
     op_info_group1,
     op_info_group2,
@@ -55,7 +62,7 @@ const op_info_t op_info_groups[][] = {
     op_info_group7,
 }
 
-modrm16_info modrm16_info_table[] {
+const _modrm16_info modrm16_info_table[] {
     // Mod 0x0 : Reg 0x0 : R/M 0x0-0x7
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_SI, .disp_size = 0 },
     { .calc_addr = calc_addr16_base_index, .base = X86_REG_BX, .index = X86_REG_DI, .disp_size = 0 },
@@ -643,53 +650,74 @@ modrm32_info modrm_info_sib_override = {
     .sib = true
 };
 
-INLINE_FORCE void
-instr_init(instr_t *instr, void *buf) {
-    ASSERT(instr && buf);
-
-    instr->calc_addr = NULL;
-    instr->len = 0;
-
-    while (true) {
-        ubyte_t prefix = mem_host_read_b(buf++);
+static INLINE_FORCE void
+_decode_prefix(instr_t *instr, _decode_t *decode) {
+    bool decode->seg_override = false;
+    for (ubyte_t prefix = mem_host_read_b(decode->buf); true; decode->buf++, instr->len++)
         switch (prefix) {
             case X86_PREFIX_REP:
             case X86_PREFIX_REPE_REPZ:
             case X86_PREFIX_REPNE_REPNZ:
             case X86_PREFIX_LOCK:
-                instr->instr_prefix = prefix;
+                instr_prefix = prefix;
                 break;
             case X86_PREFIX_OVERRIDE_CS:
-                instr->seg_prefix = true;
-                instr->seg = X86_REG_CS;
+                decode->seg_override = true;
+                decode->prefix_seg = X86_REG_CS;
                 break;
             case X86_PREFIX_OVERRIDE_SS:
-                instr->seg_prefix = true;
-                instr->seg = X86_REG_SS;
+                decode->seg_override = true;
+                decode->prefix_seg = X86_REG_SS;
                 break;
             case X86_PREFIX_OVERRIDE_DS:
-                instr->seg_prefix = true;
-                instr->seg = X86_REG_DS;
+                decode->seg_override = true;
+                decode->prefix_seg = X86_REG_DS;
                 break;
             case X86_PREFIX_OVERRIDE_ES:
-                instr->seg_prefix = true;
-                instr->seg = X86_REG_ES;
+                decode->seg_override = true;
+                decode->prefix_seg = X86_REG_ES;
                 break;
-            default: goto done;
+            default: return;
         }
-        instr->len++;
+    }
+}
+
+static INLINE_FORCE void
+_decode_opcode(instr_t *instr, _decode_t *decode) {
+    ubyte_t opcode = mem_host_read_b(decode->buf++);
+
+    for (ubyte_t opcode = mem_host_read_b(decode->buf), _op_info_t *table = op_table; true; decode->buf++) {
+        switch (opcode) {
+            case X86_TWO_BYTE_OPCODE_ESCAPE:
+                table = op_table_escape;
+                instr->len++;
+                continue;
+            default:
+                decode->op_info = table[opcode];
+                instr->len++;
+                goto done;
+        }
     }
 
 done:
-    ubyte_t opcode = mem_host_read_b(buf++);
-    op_info_t *op_info;
-    if (UNLIKELY(opcode == X86_OPCODE_ESCAPE)) {
-        op_info = op_table_escape[opcode];
-        instr->len += 2;
-    } else {
-        op_info = op_table[opcode];
-        instr->len++;
+    if (op_info->group) {
+        ubyte_t modrm
     }
+}
+
+INLINE_FORCE void
+instr_init(instr_t *instr, ubyte_t *buf) {
+    ASSERT(instr && buf);
+
+    instr->calc_addr = NULL;
+    instr->len = 0;
+
+    _decode_context_t decode = { .buf = buf };
+
+    _decode_prefix(instr, &decode);
+    _decode_opcode(instr, &decode);
+
+
 
     if (op_info->modrm) {
         ubyte_t modrm = mem_host_read_b(buf++);

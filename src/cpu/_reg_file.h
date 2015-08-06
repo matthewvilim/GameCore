@@ -4,8 +4,8 @@
  * src/cpu/reg_file_c.h
  */
 
-#ifndef REG_FILE_C_H
-#define REG_FILE_C_H
+#ifndef _REG_FILE_H
+#define _REG_FILE_H
 
 #include "reg_file.h"
 

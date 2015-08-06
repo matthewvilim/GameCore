@@ -68,7 +68,7 @@
 #define X86_PREFIX_OVERRIDE_DS    0x3E
 #define X86_PREFIX_OVERRIDE_ES    0x26
 
-#define X86_OPCODE_ESCAPE 0x0F
+#define X86_TWO_BYTE_OPCODE_ESCAPE 0x0F
 
 /* General Registers
  *

@@ -4,8 +4,8 @@
  * src/cpu/x86_instr.h
  */
 
-#ifndef INSTR_C_H
-#define INSTR_C_H
+#ifndef _INSTR_H
+#define _INSTR_H
 
 typedef struct instr {
     uint8_t len : 4;

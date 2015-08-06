@@ -4,8 +4,8 @@
  * src/shared/macros.h
  */
 
-#ifndef CPU_C_H
-#define CPU_C_H
+#ifndef _CPU_H
+#define _CPU_H
 
 #include "cpu.h"
 

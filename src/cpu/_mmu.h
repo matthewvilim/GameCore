@@ -4,12 +4,12 @@
  * src/cpu/mmu_c.h
  */
 
-#ifndef MMU_C_H
-#define MMU_C_H
+#ifndef _MMU_H
+#define _MMU_H
 
 #include "mmu.h"
 
-#include "mem_c.h"
+#include "_mem.h"
 
 typedef struct seg_desc_cache {
     bool dirty;
