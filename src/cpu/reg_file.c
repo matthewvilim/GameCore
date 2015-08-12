@@ -16,6 +16,8 @@
 
 static INLINE_FORCE void
 _reset(reg_file_t *reg_file, mmu_t *mmu) {
+    reg_file_gen_write_dw(reg_file, REG_GEN_ZERO, 0);
+
     reg_file_gen_write_b(reg_file, X86_REG_DH, X86_DEV_ID_386);
     reg_file_gen_write_b(reg_file, X86_REG_DL, X86_386_STEP_ID);
 

@@ -104,6 +104,8 @@
 #define X86_REG_DH 0x6
 #define X86_REG_BH 0x7
 
+#define X86_REG_GEN_COUNT 8
+
 /* Segment Registers
  *
  *  15                           3  2   1   0
@@ -120,6 +122,8 @@
 #define X86_REG_CS 0x1
 #define X86_REG_SS 0x2
 #define X86_REG_DS 0x3
+
+#define X86_REG_SEG_COUNT 6
 
 #define X86_SEG_SELECTOR_MASK_RPL      MASK_RANGE(1, 0)
 #define X86_SEG_SELECTOR_MASK_TI       BIT(2)

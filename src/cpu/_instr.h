@@ -38,4 +38,18 @@ typedef struct instr {
     instr_exe_t *exe;
 } instr_t;
 
+INLINE_FORCE udword_t
+_calc_addr(const cpu_t *cpu, const instr_t *instr) {
+    if (instr->addr16) {
+        return cpu_gen_read_w(cpu, instr->modrm.m.base) +
+               cpu_gen_read_w(cpu, instr->modrm.m.index) +
+               instr->modrm.m.disp16;
+    } else {
+        return cpu_gen_read_dw(cpu, instr->modrm.m.base) +
+              (cpu_gen_read_dw(cpu, instr->modrm.m.index) << instr->modrm.m.scale) +
+               instr->modrm.m.disp32;
+    }
+
+}
+
 #endif

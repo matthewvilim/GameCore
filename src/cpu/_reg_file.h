@@ -9,6 +9,8 @@
 
 #include "reg_file.h"
 
+#define REG_GEN_ZERO X86_REG_GEN_COUNT
+
 typedef struct reg_desc_table {
     addr_lin_t base;
     uword_t limit;
@@ -23,9 +25,9 @@ typedef struct reg_task {
 } reg_task_t;
 
 typedef struct reg_file {
-    udword_t gen[8], eip, eflags;
+    udword_t gen[X86_REG_GEN_COUNT + 1], eip, eflags;
 
-    uword_t seg[6];
+    uword_t seg[X86_REG_SEG_COUNT];
 
     udword_t eip;
 
