@@ -34,7 +34,6 @@ typedef struct instr {
         uint8_t addr_size : 1;
     }
 
-    instr_calc_addr_t *calc_addr;
     instr_exe_t *exe;
 } instr_t;
 
