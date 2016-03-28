@@ -1,10 +1,5 @@
 #include "instr.h"
 
-#define DISP_NONE  0
-#define DISP_BYTE  1
-#define DISP_WORD  2
-#define DISP_DWORD 3
-
 typedef struct _op_class {
     char *name;
     uint8_t op1_seg;
@@ -23,29 +18,43 @@ typedef struct _op_info {
     };
 } _op_info_t;
 
+typedef enum _disp {
+    DISP_NONE,
+    DISP_BYTE,
+    DISP_WORD,
+    DISP_DWORD
+} _disp_t;
+
+typedef struct _operand {
+    operand_handler_t handler;
+    union {
+        uint8_t r;
+        struct m {
+            uint8_t base : 3;
+            uint8_t index : 3;
+            uint8_t scale : 2;
+            enum disp {
+                DISP_NONE,
+                DISP_BYTE,
+                DISP_WORD,
+                DISP_DWORD
+            } : 2;
+        };
+    };
+    uint8_t reg;
+} _operand_t;
+
+typedef struct _sib_info {
+    _operand_t operand;
+} _sib_info_t;
+
 typedef struct _modrm_info {
     bool sib;
     union {
-        _sib_info_t *table;
-        struct {
-            bool rm;
-            union {
-                uint8_t r;
-                struct {
-                    uint8_t base, index, scale, disp;
-                };
-            };
-
-            union {
-                uint8_t reg, group;
-            };
-        };
+        _sib_info_t *sib_info;
+        _operand_t operand;
     };
 } _modrm_info_t;
-
-typedef struct _sib_info {
-    uint8_t base, index, scale, disp;
-} _sib_info_t;
 
 typedef struct _decode {
     ubyte_t *buf;
