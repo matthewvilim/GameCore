@@ -18,13 +18,6 @@ typedef struct _op_info {
     };
 } _op_info_t;
 
-typedef enum _disp {
-    DISP_NONE,
-    DISP_BYTE,
-    DISP_WORD,
-    DISP_DWORD
-} _disp_t;
-
 typedef struct _operand {
     operand_handler_t handler;
     union {
@@ -1668,12 +1661,12 @@ instr_init(instr_t *instr, ubyte_t *buf) {
         }
 
         switch (disp_size) {
-            case 0: break;
-            case sizeof(ubyte_t):
+            case DISP_NONE: break;
+            case DISP_BYTE:
                 instr->disp32 = mem_host_read_b(buf);
-            case sizeof(uword_t):
+            case DISP_WORD:
                 instr->disp32 = mem_host_read_w(buf);
-            case sizeof(udword_t):
+            case DISP_DWORD:
                 instr->disp32 = mem_host_read_dw(buf);
             default: break;
         }
