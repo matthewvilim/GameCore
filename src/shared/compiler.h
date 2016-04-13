@@ -8,10 +8,10 @@
 # define __has_builtin(feature) 0
 #endif
 
-#ifdef __BIG_ENDIAN__
-# define ARCH_NATIVE_BIG_ENDIAN     __BIG_ENDIAN__
+#ifdef __LITTLE_ENDIAN__
+# define HOST_LITTLE_ENDIAN     __LITTLE_ENDIAN__
 #else
-# error native architecture endianness must be defined
+# error host endianness must be defined
 #endif
 
 #if __has_attribute(always_inline)

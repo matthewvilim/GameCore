@@ -53,12 +53,12 @@
 # define BYTE_SWAP16(val) ((val >> 8) | (val << 8))
 #endif
 
-#if ARCH_NATIVE_BIG_ENDIAN
-# define ENDIAN_CONV_DWORD(val)   BYTE_SWAP32(val)
-# define ENDIAN_CONV_WORD(val)    BYTE_SWAP16(val)
+#if HOST_LITTLE_ENDIAN
+# define LITTLE_ENDIAN_WORD(val)   (val)
+# define LITTLE_ENDIAN_DWORD(val)  (val)
 #else
-# define ENDIAN_CONV_DWORD(val)   (val)
-# define ENDIAN_CONV_WORD(val)    (val)
+# define LITTLE_ENDIAN_WORD(val)    BYTE_SWAP16(val)
+# define LITTLE_ENDIAN_DWORD(val)   BYTE_SWAP32(val)
 #endif
 
 #define GBYTES_LOG2(n) (30 + (n))

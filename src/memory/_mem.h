@@ -46,12 +46,12 @@ mem_read_b(mem_t *mem, const mem_addr_phys_t addr) {
 
 static INLINE_FORCE uword_t
 mem_read_w(mem_t *mem, const mem_addr_phys_t addr) {
-    return ENDIAN_CONV_WORD(*(uword_t *)_addr_phys_to_host(mem, addr);
+    return LITTLE_ENDIAN_WORD(*(uword_t *)_addr_phys_to_host(mem, addr);
 }
 
 static INLINE_FORCE udword_t
 mem_read_dw(mem_t *mem, const mem_addr_phys_t addr) {
-    return ENDIAN_CONV_DWORD(*(udword_t *)_addr_phys_to_host(mem, addr));
+    return LITTLE_ENDIAN_DWORD(*(udword_t *)_addr_phys_to_host(mem, addr));
 }
 
 static INLINE_FORCE void
@@ -61,12 +61,12 @@ mem_write_b(mem_t *mem, const mem_addr_phys_t addr, const ubyte_t val) {
 
 static INLINE_FORCE void
 mem_write_w(mem_t *mem, const mem_addr_phys_t addr, const uword_t val) {
-    *(uword_t *)_addr_phys_to_host(mem, addr) = ENDIAN_CONV_WORD(val);
+    *(uword_t *)_addr_phys_to_host(mem, addr) = LITTLE_ENDIAN_WORD(val);
 }
 
 static INLINE_FORCE void
 mem_write_dw(mem_t *mem, const mem_addr_phys_t addr, const udword_t val) {
-    *(udword_t *)_addr_phys_to_host(mem, addr) = ENDIAN_CONV_DWORD(val);
+    *(udword_t *)_addr_phys_to_host(mem, addr) = LITTLE_ENDIAN_DWORD(val);
 }
 
 static INLINE_FORCE void
