@@ -32,11 +32,13 @@
 /********************
  * COMMON BIT MASKS *
  ********************/
- #define MASK_LOW_B     MASK_RANGE( 7, 0)
- #define MASK_HIGH_B    MASK_RANGE(15, 8)
- #define MASK_LOW_W     MASK_RANGE(15, 0)
- #define MASK_HIGH_W    MASK_RANGE(31, 16)
+ #define MASK_B(i)     (MASK_RANGE(7,0) << (8 * i))
+ #define MASK_W(i)     (MASK_RANGE(15,0) << (16 * i))
  #define MAKS_DW        MASK_RANGE(31, 0)
+ #define MASK_LOW_B     MASK_B(0)
+ #define MASK_HIGH_B    MASK_B(1)
+ #define MASK_LOW_W     MASK_W(0)
+ #define MASK_HIGH_W    MASK_W(1)
 
 #if __has_builtin(__builtin_bswap32)
 # define BYTE_SWAP32(val) __builtin_bswap32(val)

@@ -18,6 +18,13 @@ typedef struct mem {
     size_t size;
 } mem;
 
+typedef enum mem_mask {
+    MEM_MASK_B0 = 1 << 0,
+    MEM_MASK_B1 = 1 << 1,
+    MEM_MASK_B2 = 1 << 2,
+    MEM_MASK_B3 = 1 << 3
+} mem_mask;
+
 static INLINE_FORCE void *
 _addr_phys_to_host(const mem *mem, const mem_addr_phys addr) {
     assert(addr < mem->size);
@@ -52,6 +59,24 @@ mem_write_w(mem *mem, const mem_addr_phys addr, const uword val) {
 static INLINE_FORCE void
 mem_write_dw(mem *mem, const mem_addr_phys addr, const udword val) {
     *(udword *)_addr_phys_to_host(mem, addr) = LITTLE_ENDIAN_DWORD(val);
+}
+
+static INLINE_FORCE void
+mem_write_split_w(mem *mem, const mem_addr_phys addr, const uword val, const mem_mask mask) {
+    for (mem_mask i = MEM_MASK_B0, unsigned int j = 0, k = 0; i == MEM_MASK_B1; i <<= 1, j++) {
+        if (mask & i) {
+            *(ubyte *)_addr_phys_to_host(mem, addr + k++) = BIT_FIELD_READ(LITTLE_ENDIAN_WORD(val), MASK_B(j));
+        }
+    }
+}
+
+static INLINE_FORCE void
+mem_write_split_dw(mem *mem, const mem_addr_phys addr, const uword val, const mem_mask mask) {
+    for (mem_mask i = MEM_MASK_B0, unsigned int j = 0, k = 0; i == MEM_MASK_B3; i <<= 1, j++) {
+        if (mask & i) {
+            *(ubyte *)_addr_phys_to_host(mem, addr + k++) = BIT_FIELD_READ(LITTLE_ENDIAN_WORD(val), MASK_B(j));
+        }
+    }
 }
 
 static INLINE_FORCE void

@@ -12,17 +12,17 @@ typedef struct instr {
 
     unsigned int len : 4;
 
-    struct addr {
-        instr_addr handler;
-        reg base : 3;
-        reg index : 3;
-        unsigned int scale : 2;
-        dword disp;
-    };
-
     struct op1, op2 {
         instr_op handler;
-        reg reg : 3;
+        union {
+            reg reg : 3;
+            struct addr {
+                reg base : 3;
+                reg index : 3;
+                unsigned int scale : 2;
+                dword disp;
+            };
+        };
     };
 
     struct flags {
