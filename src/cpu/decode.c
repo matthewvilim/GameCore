@@ -31,3 +31,28 @@ typedef struct _decode {
     _modrm_t modrm;
     _sib_t sib;
 } _decode_t;
+
+typedef struct addr {
+    reg base, index;
+    unsigned int scale : 2;
+    enum { DISP_B, DISP_W, DISP_DW } disp;
+};
+
+typedef struct modrm {
+    bool sib;
+    union {
+        addr *table;
+        struct {
+            addr_handler handler;
+            union {
+                reg reg;
+                addr addr;
+            };
+        };
+    };
+} modrm;
+
+typedef struct sib {
+    addr_handler handler;
+    addr addr;
+};
