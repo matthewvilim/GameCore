@@ -41,4 +41,15 @@ typedef struct cpu {
     jmp_buf exc_buf;
 } cpu;
 
+C86_INLINE bool
+cpu_pe_enabled(const cpu *cpu) {
+    return reg_file_read_w(cpu->reg_file, REG_CR0) & X86_CR0_MASK_PE;
+}
+
+C86_INLINE bool
+cpu_vm_enabled(const cpu *cpu) {
+    return reg_file_read_w(cpu->reg_file, REG_EFLAGS) & X86_EFLAGS_MASK_VM;
+}
+
+
 #endif

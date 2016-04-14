@@ -89,7 +89,7 @@ reg_file_read_b(const reg_file *reg_file, const reg reg) {
         case REG_DL: return BIT_FIELD_READ(reg_file->edx, MASK_LOW_B);
         case REG_DH: return BIT_FIELD_READ(reg_file->edx, MASK_HIGH_B);
         case REG_NULL: return 0;
-        default: assert(false);
+        default: assert(false); return 0;
     }
 }
 
@@ -110,12 +110,12 @@ reg_file_write_b(reg_file *reg_file, const reg reg, const val) {
 
 C86_INLINE bool
 reg_file_pe_enabled(const reg_file *reg_file) {
-    return reg_file->cr0 & X86_CR0_MASK_PE;
+    return reg_file_read_w(reg_file, REG_CR0) & X86_CR0_MASK_PE;
 }
 
 C86_INLINE bool
 reg_file_vm_enabled(const reg_file *reg_file) {
-    return reg_file->eflags & X86_EFLAGS_MASK_VM;
+    return reg_file_read_w(reg_file, REG_EFLAGS) & X86_EFLAGS_MASK_VM;
 }
 
 #endif

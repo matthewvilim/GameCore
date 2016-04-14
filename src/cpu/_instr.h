@@ -8,47 +8,37 @@
 #define _INSTR_H
 
 typedef struct instr {
-    uint8 len : 4;
+    byte prefix;
 
-    struct modrm {
-        uint8 reg : 3;
-        union {
-            uint8 r : 3;
-            struct m {
-                uint8 scale : 2;
-                uint8 index : 3;
-                uint8 base : 3;
-                union {
-                    sword disp16;
-                    sdword disp32;
-                };
-            };
-        };
+    unsigned int len : 4;
+
+    struct addr {
+        instr_addr handler;
+        reg base : 3;
+        reg index : 3;
+        unsigned int scale : 2;
+        dword disp;
     };
 
-    ubyte instr_prefix;
+    struct op1, op2 {
+        instr_op handler;
+        reg reg : 3;
+    };
 
     struct flags {
-        uint8 seg_prefix : 1;
-        uint8 op_size : 1;
-        uint8 addr_size : 1;
+        unsigned int seg_prefix : 1;
+        unsigned int op_size : 1;
+        unsigned int addr_size : 1;
     }
 
     instr_exe *exe;
 } instr;
 
-INLINE_FORCE udword_t
-_calc_addr(const cpu *cpu, const instr *instr) {
-    if (instr->addr16) {
-        return cpu_gen_read_w(cpu, instr->modrm.m.base) +
-               cpu_gen_read_w(cpu, instr->modrm.m.index) +
-               instr->modrm.m.disp16;
-    } else {
-        return cpu_gen_read_dw(cpu, instr->modrm.m.base) +
-              (cpu_gen_read_dw(cpu, instr->modrm.m.index) << instr->modrm.m.scale) +
-               instr->modrm.m.disp32;
-    }
-
+INLINE_FORCE dword
+_calc_addr(const instr *instr, const reg_file *reg_file) {
+        return reg_file_read_dw(reg_file, instr->addr.base) +
+              (reg_file_read_dw(reg_file, instr->addr.index) << instr->addr.scale) +
+               instr->addr.disp;
 }
 
 #endif
