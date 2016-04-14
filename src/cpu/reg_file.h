@@ -7,7 +7,7 @@
  #ifndef REG_FILE_H
  #define REG_FILE_H
 
-void reg_file_init(reg_file_t *reg_file);
-void reg_file_reset(reg_file_t *reg_file);
+void reg_file_init(reg_file *reg_file);
+void reg_file_reset(reg_file *reg_file);
 
  #endif

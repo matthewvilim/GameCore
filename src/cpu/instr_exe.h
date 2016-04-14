@@ -7,11 +7,11 @@
  #ifndef INSTR_CALC_ADDR
  #define INSTR_CALC_ADDR
 
-typedef struct cpu cpu_t;
-typedef struct instr instr_t;
+typedef struct cpu cpu;
+typedef struct instr instr;
 
-typedef void instr_exe_t(cpu_t *cpu, const instr_t *instr);
+typedef void instr_exe_t(cpu *cpu, const instr *instr);
 
-void instr_exe_add_gen_b_gen_b(cput_t *cpu, const instr_t *instr);
+void instr_exe_add_gen_b_gen_b(cput *cpu, const instr *instr);
 
 #endif

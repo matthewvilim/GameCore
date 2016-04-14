@@ -2,30 +2,30 @@
 
 typedef struct _op_class {
     char *name;
-    uint8_t op1_seg;
-    uint8_t op2_seg;
-} _op_class_t;
+    uint8 op1_seg;
+    uint8 op2_seg;
+} _op_class;
 
 typedef struct _op_info {
-    op_class_t *class;
+    op_class *class;
     union {
         struct {
-            instr_exe_t *exe;
+            instr_exe *exe;
             bool modrm : 1;
             bool immediate : 1;
         };
-        uint8_t group : 3;
+        uint8 group : 3;
     };
-} _op_info_t;
+} _op_info;
 
 typedef struct _operand {
-    operand_handler_t handler;
+    operand_handler handler;
     union {
-        uint8_t r;
+        uint8 r;
         struct m {
-            uint8_t base : 3;
-            uint8_t index : 3;
-            uint8_t scale : 2;
+            uint8 base : 3;
+            uint8 index : 3;
+            uint8 scale : 2;
             enum disp {
                 DISP_NONE,
                 DISP_BYTE,
@@ -34,37 +34,37 @@ typedef struct _operand {
             } : 2;
         };
     };
-    uint8_t reg;
-} _operand_t;
+    uint8 reg;
+} _operand;
 
 typedef struct _sib_info {
-    _operand_t operand;
-} _sib_info_t;
+    _operand operand;
+} _sib_info;
 
 typedef struct _modrm_info {
     bool sib;
     union {
-        _sib_info_t *sib_info;
-        _operand_t operand;
+        _sib_info *sib_info;
+        _operand operand;
     };
-} _modrm_info_t;
+} _modrm_info;
 
 typedef struct _decode {
-    ubyte_t *buf;
+    ubyte *buf;
     bool seg_override;
-    ubyte_t prefix_seg;
-    _op_info_t *op_info;
-} _decode_t;
+    ubyte prefix_seg;
+    _op_info *op_info;
+} _decode;
 
-const _op_info_t op_table[] = {
+const _op_info op_table[] = {
     { .class = class_add; .instr_exe = instr_exe_add_Eb_Gb; .modrm = true; },
 }
 
-const _op_info_t op_escape_table[] = {
+const _op_info op_escape_table[] = {
     { .instr_exe = instr_exe_add_Eb_Gb }
 }
 
-const _op_info_t op_info_group0[] = {
+const _op_info op_info_group0[] = {
     { .instr_exe = instr_exe_add_Eb_Gb },
     { .instr_exe = instr_exe_add_Eb_Gb },
     { .instr_exe = instr_exe_add_Eb_Gb },
@@ -75,7 +75,7 @@ const _op_info_t op_info_group0[] = {
     { .instr_exe = instr_exe_add_Eb_Gb }
 }
 
-const _op_info_t op_info_groups[][] = {
+const _op_info op_info_groups[][] = {
     op_info_group0,
     op_info_group1,
     op_info_group2,
@@ -86,7 +86,7 @@ const _op_info_t op_info_groups[][] = {
     op_info_group7,
 }
 
-const _modrm_info_t modrm_info16[] {
+const _modrm_info modrm_info16[] {
     // Mod 0x0 : Reg 0x0 : R/M 0x0-0x7
     { .sib = false, .rm = false, .base = X86_REG_BX,   .index = X86_REG_SI,   .scale = 0, .disp = DISP_NONE, .reg = X86_REG_EAX },
     { .sib = false, .rm = false, .base = X86_REG_BX,   .index = X86_REG_DI,   .scale = 0, .disp = DISP_NONE, .reg = X86_REG_EAX },
@@ -377,7 +377,7 @@ const _modrm_info_t modrm_info16[] {
     { .sib = false, .rm = true, .r = X86_REG_EDI, .reg = X86_REG_EDI }
 }
 
-const _modrm_info_t modrm_info32[] {
+const _modrm_info modrm_info32[] {
     // Mod 0x0 : Reg 0x0 : R/M 0x0-0x7
     { .sib = false, .rm = false, .base = X86_REG_EAX,  .index = REG_GEN_ZERO, .scale = 0, .disp = DISP_NONE,  .reg = X86_REG_EAX },
     { .sib = false, .rm = false, .base = X86_REG_ECX,  .index = REG_GEN_ZERO, .scale = 0, .disp = DISP_NONE,  .reg = X86_REG_EAX },
@@ -668,7 +668,7 @@ const _modrm_info_t modrm_info32[] {
     { .sib = false, .rm = true, .r = X86_REG_EDI, .reg = X86_REG_EDI }
 }
 
-const _sib_info_t sib_info0[] {
+const _sib_info sib_info0[] {
     // SS 0x0 : Index 0x0 : Base 0x0-0x7
     { .base = X86_REG_EAX,  .index = X86_REG_EAX, .scale = 0, .disp = DISP_NONE },
     { .base = X86_REG_ECX,  .index = X86_REG_EAX, .scale = 0, .disp = DISP_NONE },
@@ -959,7 +959,7 @@ const _sib_info_t sib_info0[] {
     { .base = X86_REG_EDI,  .index = X86_REG_EDI, .scale = 3, .disp = DISP_NONE },
 }
 
-const _sib_info_t sib_info1[] {
+const _sib_info sib_info1[] {
     // SS 0x0 : Index 0x0 : Base 0x0-0x7
     { .base = X86_REG_EAX, .index = X86_REG_EAX, .scale = 0, .disp = DISP_BYTE },
     { .base = X86_REG_ECX, .index = X86_REG_EAX, .scale = 0, .disp = DISP_BYTE },
@@ -1250,7 +1250,7 @@ const _sib_info_t sib_info1[] {
     { .base = X86_REG_EDI, .index = X86_REG_EDI, .scale = 3, .disp = DISP_BYTE }
 }
 
-const _sib_info_t sib_info2[] {
+const _sib_info sib_info2[] {
     // SS 0x0 : Index 0x0 : Base 0x0-0x7
     { .base = X86_REG_EAX, .index = X86_REG_EAX, .scale = 0, .disp = DISP_DWORD },
     { .base = X86_REG_ECX, .index = X86_REG_EAX, .scale = 0, .disp = DISP_DWORD },
@@ -1542,9 +1542,9 @@ const _sib_info_t sib_info2[] {
 }
 
 static INLINE_FORCE void
-_decode_prefix(instr_t *instr, _decode_t *decode) {
+_decode_prefix(instr *instr, _decode *decode) {
     bool decode->seg_override = false;
-    for (ubyte_t prefix = mem_host_read_b(decode->buf); true; decode->buf++, instr->len++)
+    for (ubyte prefix = mem_host_read_b(decode->buf); true; decode->buf++, instr->len++)
         switch (prefix) {
             case X86_PREFIX_REP:
             case X86_PREFIX_REPE_REPZ:
@@ -1574,10 +1574,10 @@ _decode_prefix(instr_t *instr, _decode_t *decode) {
 }
 
 static INLINE_FORCE void
-_decode_opcode(instr_t *instr, _decode_t *decode) {
-    ubyte_t opcode = mem_host_read_b(decode->buf++);
+_decode_opcode(instr *instr, _decode *decode) {
+    ubyte opcode = mem_host_read_b(decode->buf++);
 
-    for (ubyte_t opcode = mem_host_read_b(decode->buf), _op_info_t *table = op_table; true; decode->buf++) {
+    for (ubyte opcode = mem_host_read_b(decode->buf), _op_info *table = op_table; true; decode->buf++) {
         switch (opcode) {
             case X86_TWO_BYTE_OPCODE_ESCAPE:
                 table = op_table_escape;
@@ -1592,18 +1592,18 @@ _decode_opcode(instr_t *instr, _decode_t *decode) {
 
 done:
     if (op_info->group) {
-        ubyte_t modrm
+        ubyte modrm
     }
 }
 
 INLINE_FORCE void
-instr_init(instr_t *instr, ubyte_t *buf) {
+instr_init(instr *instr, ubyte *buf) {
     ASSERT(instr && buf);
 
     instr->calc_addr = NULL;
     instr->len = 0;
 
-    _decode_context_t decode = { .buf = buf };
+    _decode_context decode = { .buf = buf };
 
     _decode_prefix(instr, &decode);
     _decode_opcode(instr, &decode);
@@ -1611,11 +1611,11 @@ instr_init(instr_t *instr, ubyte_t *buf) {
 
 
     if (op_info->modrm) {
-        ubyte_t modrm = mem_host_read_b(buf++);
+        ubyte modrm = mem_host_read_b(buf++);
         instr->len++;
 
-        modrm_info_t *modrm_info;
-        uint8_t disp_size = 0;
+        modrm_info *modrm_info;
+        uint8 disp_size = 0;
         if (instr->flags & ADDR16) {
             modrm_info = modrm_info_table16 + modrm;
 
@@ -1636,7 +1636,7 @@ instr_init(instr_t *instr, ubyte_t *buf) {
                 disp_size = modrm_info->disp_size;
 
                 if (modrm_info->sib) {
-                    ubyte_t sib = mem_host_read_b(buf++);
+                    ubyte sib = mem_host_read_b(buf++);
                     instr->len++;
 
                     instr->modrm.m.base = BIT_FIELD_READ(sib, X86_SIB_BASE_MASK);
@@ -1654,7 +1654,7 @@ instr_init(instr_t *instr, ubyte_t *buf) {
                 instr->modrm.r = BIT_FIELD_READ(modrm, X86_MODRM_RM_MASK);
             }
         }
-        uint8_t reg = BIT_FIELD_READ(modrm, X86_MODRM_REG_MASK);
+        uint8 reg = BIT_FIELD_READ(modrm, X86_MODRM_REG_MASK);
         instr->modrm.reg = reg;
         if (!op_info->class) {
             op_info = op_info_groups[op_info->group][reg];

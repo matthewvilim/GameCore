@@ -7,19 +7,19 @@
 #include <gc_emu.h>
 
 typedef struct gc_emu {
-    cpu_t cpu;
-    mem_t mem;
-} gc_emu_t, *gc_emu_handle_t;
+    cpu cpu;
+    mem mem;
+} gc_emu_t, *gc_emu_handle;
 
 gc_error_t
-gc_emu_alloc(gc_emu_handle_t *handle, gc_emu_config_t *config) {
-    gc_error_t error = GC_NO_ERROR;
+gc_emu_alloc(gc_emu_handle *handle, gc_emu_config *config) {
+    gc_error error = GC_NO_ERROR;
     if (!handle) {
         error = GC_ARG_ERROR
         goto error_ret;
     }
 
-    gc_emu_t *emu = malloc(sizeof(*emu);
+    gc_emu *emu = malloc(sizeof(*emu);
     if (!emu) {
         error = GC_MALLOC_ERROR;
         goto error_ret;
@@ -45,14 +45,14 @@ gc_emu_alloc(gc_emu_handle_t *handle, gc_emu_config_t *config) {
 }
 
 gc_error_t
-gc_emu_dealloc(gc_emu_handle_t handle) {
-    gc_error_t error = GC_NO_ERROR;
+gc_emu_dealloc(gc_emu_handle handle) {
+    gc_error error = GC_NO_ERROR;
     if (!handle) {
         error = GC_ARG_ERROR;
         goto error_ret;
     }
 
-    gc_emu_t *emu = handle;
+    gc_emu *emu = handle;
     if (error = cpu_dealloc(emu->cpu) {
         goto error_cpu;
     }

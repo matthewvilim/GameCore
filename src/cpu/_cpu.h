@@ -13,32 +13,32 @@
 #include "reg_file.h"
 
 typedef struct seg_desc {
-    udword_t dw[2];
-} seg_desc_t;
+    udword dw[2];
+} seg_desc;
 
 typedef struct tss_desc {
-    udword_t dw[2];
-} tss_desc_t;
+    udword dw[2];
+} tss_desc;
 
 typedef struct tss32 {
-    udword_t link, esp0, ss0, esp1, ss1, esp2, ss2, cr3, eip, eflags, gen[8], seg[6], io_map_base;
-} tss32_t;
+    udword link, esp0, ss0, esp1, ss1, esp2, ss2, cr3, eip, eflags, gen[8], seg[6], io_map_base;
+} tss32;
 
 typedef struct tss16 {
-    uword_t link, sp0, ss0, sp1, ss1, sp2, ss2, cr3, ip, flags, gen[8], seg[6], io_map_base;
-} tss16_t;
+    uword link, sp0, ss0, sp1, ss1, sp2, ss2, cr3, ip, flags, gen[8], seg[6], io_map_base;
+} tss16;
 
 typedef struct tlb_entry {
-    addr_virt_t virt;
-    addr_phys_t phys;
+    addr_virt virt;
+    addr_phys phys;
     void *host;
-    uint8_t permission;
-} tlb_entry_t;
+    uint8 permission;
+} tlb_entry;
 
 typedef struct cpu {
-    reg_file_t reg_file;
-    mmu_t mmu;
+    reg_file reg_file;
+    mmu mmu;
     jmp_buf exc_buf;
-} cpu_t;
+} cpu;
 
 #endif

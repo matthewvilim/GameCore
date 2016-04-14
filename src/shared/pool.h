@@ -7,6 +7,6 @@
 #ifndef POOL_H
 #define POOL_H
 
-typedef struct pool pool_t;
+typedef struct pool pool;
 
 #endif

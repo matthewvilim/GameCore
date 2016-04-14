@@ -8,30 +8,30 @@
 #define MASK_TLB_TAG        MASK_RANGE(X86_MEM_PHYS_BUS_SIZE_80386 - 1, TLB_SIZE_LOG2 + PAGE_SIZE_LOG2)
 
 gc_error_t
-mmu_init(mmu_t *mmu, mem_t *mem) {
+mmu_init(mmu *mmu, mem *mem) {
     mmu->mem = mem;
 }
 
 void
-mmu_term(mmu_t *mmu) {
+mmu_term(mmu *mmu) {
     mmu->mem = NULL;
 }
 
 void
-mmu_cache_seg_desc(mmu_t *mmu, reg_file_t *reg_file, uint8_t seg, bool consistent) {
-    udword_t base, limit;
-    uint8_t dpl, type, s, dpl, p, avl, db;
+mmu_cache_seg_desc(mmu *mmu, reg_file *reg_file, uint8 seg, bool consistent) {
+    udword base, limit;
+    uint8 dpl, type, s, dpl, p, avl, db;
     if (mmu_protected(mmu)) {
-        word_t sel = reg_file_seg_read(reg_file, seg);
+        word sel = reg_file_seg_read(reg_file, seg);
 
-        lin_addr_t addr;
+        lin_addr addr;
         if (BIT_FIELD_READ(sel, X86_SEG_SELECTOR_MASK_TI)) {
             addr = reg_file->ldtr.base;
         } else {
             addr = reg_file->gdtr.base;
         }
 
-        seg_desc_t desc;
+        seg_desc desc;
         desc.dw[0] = mmu_lin_read_dw(mmu, addr);
         desc.dw[1] = mmu_lin_read_dw(mmu, addr + 4);
 
@@ -48,7 +48,7 @@ mmu_cache_seg_desc(mmu_t *mmu, reg_file_t *reg_file, uint8_t seg, bool consisten
             BIT_FIELD_WRITE(limit, MASK_KBYTES(2), ~0);
         }
 
-        seg_desc_cache_t *cache = mmu->seg + seg;
+        seg_desc_cache *cache = mmu->seg + seg;
         cache->type = BIT_FIELD_READ(desc.dw[1], X86_SEG_DESC_MASK_TYPE);
         cache->s = BIT_FIELD_READ(desc.dw[1], X86_SEG_DESC_MASK_S);
         dpl = BIT_FIELD_READ(desc.dw[1], X86_SEG_DESC_MASK_DPL);

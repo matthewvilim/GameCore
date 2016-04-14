@@ -15,7 +15,7 @@
 #define X86_386_STEP_ID 0x0
 
 static INLINE_FORCE void
-_reset(reg_file_t *reg_file, mmu_t *mmu) {
+_reset(reg_file *reg_file, mmu *mmu) {
     reg_file_gen_write_dw(reg_file, REG_GEN_ZERO, 0);
 
     reg_file_gen_write_b(reg_file, X86_REG_DH, X86_DEV_ID_386);
@@ -41,13 +41,13 @@ _reset(reg_file_t *reg_file, mmu_t *mmu) {
 }
 
 void
-reg_file_init(reg_file_t *reg_file) {
+reg_file_init(reg_file *reg_file) {
     ASSERT(reg_file);
 
 }
 
 void
-reg_file_reset(reg_file_t *reg_file, mmu_t *mmu) {
+reg_file_reset(reg_file *reg_file, mmu *mmu) {
     ASSERT(reg_file);
 
     _reset(reg_file, mmu);

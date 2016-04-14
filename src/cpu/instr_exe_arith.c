@@ -9,12 +9,12 @@
 #define ADD(op1, op2) ((op1) + (op2))
 
 void
-instr_exe_add_gen_b_gen_b(cput_t *cpu, const instr_t *instr) {
+instr_exe_add_gen_b_gen_b(cput *cpu, const instr *instr) {
     ASSERT(cpu && instr);
 
-    ubyte_t op1 = _operand_read_gen_b(cpu, instr, &addr);
-    ubyte_t op2 = _operand_read_gen_b(cpu, instr);
-    ubyte_t result = ADD(op1, op2);
+    ubyte op1 = _operand_read_gen_b(cpu, instr, &addr);
+    ubyte op2 = _operand_read_gen_b(cpu, instr);
+    ubyte result = ADD(op1, op2);
 
     _operand_write_gen_b(cpu, instr, result);
 }

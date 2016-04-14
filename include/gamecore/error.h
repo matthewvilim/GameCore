@@ -18,7 +18,7 @@ typedef enum c86_error {
     GC_MALLOC_ERROR,
 
     GC_LAST_ERROR
-} gc_error_t;
+} gc_error;
 
 extern const char *error_desc[GC_LAST_ERROR];
 

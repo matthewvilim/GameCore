@@ -13,14 +13,14 @@
 extern "C" {
 #endif
 
-typedef struct gc_emu *gc_emu_handle_t;
+typedef struct gc_emu *gc_emu_handle;
 
 typedef struct gc_emu_config {
 
-} gc_emu_config_t;
+} gc_emu_config;
 
-void gc_emu_alloc(gc_emu_handle_t *handle, gc_emu_config_t *config);
-void gc_emu_release(gc_emu_handle_t *handle);
+void gc_emu_alloc(gc_emu_handle *handle, gc_emu_config *config);
+void gc_emu_release(gc_emu_handle *handle);
 
 #ifdef __cplusplus
 }

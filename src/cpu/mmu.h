@@ -9,10 +9,10 @@
 
 #include "cpu.h"
 
-typedef dword_t mmu_addr_log_t;
-typedef dword_t mmu_addr_lin_t;
+typedef dword mmu_addr_log;
+typedef dword mmu_addr_lin;
 
-gc_error_t mmu_init(mmu_t *mmu, mem_t *mem);
-void mmu_term(mmu_t *mmu);
+gc_error mmu_init(mmu *mmu, mem *mem);
+void mmu_term(mmu *mmu);
 
 #endif

@@ -8,37 +8,37 @@
 #define _INSTR_H
 
 typedef struct instr {
-    uint8_t len : 4;
+    uint8 len : 4;
 
     struct modrm {
-        uint8_t reg : 3;
+        uint8 reg : 3;
         union {
-            uint8_t r : 3;
+            uint8 r : 3;
             struct m {
-                uint8_t scale : 2;
-                uint8_t index : 3;
-                uint8_t base : 3;
+                uint8 scale : 2;
+                uint8 index : 3;
+                uint8 base : 3;
                 union {
-                    sword_t disp16;
-                    sdword_t disp32;
+                    sword disp16;
+                    sdword disp32;
                 };
             };
         };
     };
 
-    ubyte_t instr_prefix;
+    ubyte instr_prefix;
 
     struct flags {
-        uint8_t seg_prefix : 1;
-        uint8_t op_size : 1;
-        uint8_t addr_size : 1;
+        uint8 seg_prefix : 1;
+        uint8 op_size : 1;
+        uint8 addr_size : 1;
     }
 
-    instr_exe_t *exe;
-} instr_t;
+    instr_exe *exe;
+} instr;
 
 INLINE_FORCE udword_t
-_calc_addr(const cpu_t *cpu, const instr_t *instr) {
+_calc_addr(const cpu *cpu, const instr *instr) {
     if (instr->addr16) {
         return cpu_gen_read_w(cpu, instr->modrm.m.base) +
                cpu_gen_read_w(cpu, instr->modrm.m.index) +

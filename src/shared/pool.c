@@ -9,16 +9,16 @@
 typedef struct _block {
     struct _block *next;
     char data[];
-} _block_t;
+} _block;
 
 typedef struct pool {
     int block_size, count;
-    _block_t *head;
-    _block_t *tail;
-} pool_t;
+    _block *head;
+    _block *tail;
+} pool;
 
 void
-pool_init(pool_t *pool, int block_size, int count) {
+pool_init(pool *pool, int block_size, int count) {
     ASSERT(pool);
 
     pool->block_size = block_size;

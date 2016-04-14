@@ -1,7 +1,7 @@
 #include "socket.h"
 
 gc_error_t
-socket_open(socket_t *socket) {
+socket_open(socket *socket) {
     int error;
 
     struct addrinfo hints;
@@ -39,6 +39,6 @@ socket_open(socket_t *socket) {
 }
 
 gc_error_t
-socket_terminate(const socket_t *socket) {
+socket_terminate(const socket *socket) {
     return socket_terminate_platform();
 }

@@ -7,7 +7,7 @@
 #include "_cpu.h"
 
 gc_error_t
-cpu_init(cpu_t *cpu, mem_t *mem) {
+cpu_init(cpu *cpu, mem *mem) {
     ASSERT(cpu && mem);
 
     reg_file_init(&cpu->reg_file);
@@ -17,7 +17,7 @@ cpu_init(cpu_t *cpu, mem_t *mem) {
 }
 
 gc_error_t
-cpu_term(cpu_t *cpu) {
+cpu_term(cpu *cpu) {
     ASSERT(cpu);
 
     mmu_term(cpu->mmu);
@@ -26,6 +26,6 @@ cpu_term(cpu_t *cpu) {
 }
 
 void
-_emulate(cpu_t *cpu, size_t cycles) {
+_emulate(cpu *cpu, size cycles) {
 
 }

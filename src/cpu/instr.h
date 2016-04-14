@@ -7,11 +7,11 @@
 #ifndef INSTR_H
 #define INSTR_H
 
-typedef uint8_t ubyte_t;
-typedef uint16_t uword_t;
-typedef uint32_t udword_t;
-typedef sint8_t sbyte_t;
-typedef sint16_t sword_t;
-typedef sint32_t sdword_t;
+typedef uint8 ubyte;
+typedef uint16 uword;
+typedef uint32 udword;
+typedef sint8 sbyte;
+typedef sint16 sword;
+typedef sint32 sdword;
 
 #endif
