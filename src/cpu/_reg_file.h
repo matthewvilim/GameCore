@@ -9,7 +9,47 @@
 
 #include "reg_file.h"
 
-#define REG_GEN_ZERO X86_REG_GEN_COUNT
+typedef enum reg {
+    REG_EAX,
+    REG_EBX,
+    REG_ECX,
+    REG_EDX,
+    REG_ESP,
+    REG_EBP,
+    REG_ESI,
+    REG_EDI,
+
+    REG_AX,
+    REG_BX,
+    REG_CX,
+    REG_DX,
+    REG_SP,
+    REG_BP,
+    REG_SI,
+    REG_DI,
+
+    REG_AL,
+    REG_AH,
+    REG_BL,
+    REG_BH,
+    REG_CL,
+    REG_CH,
+    REG_DL,
+    REG_DH,
+
+    REG_EIP,
+    REG_IP,
+
+    REG_EFLAGS,
+    REG_FLAGS,
+
+    REG_CR0,
+    REG_CR1,
+    REG_CR2,
+    REG_CR3,
+
+    REG_NULL
+} reg;
 
 typedef struct reg_desc_table {
     addr_lin base;
@@ -25,11 +65,9 @@ typedef struct reg_task {
 } reg_task;
 
 typedef struct reg_file {
-    udword gen[X86_REG_GEN_COUNT + 1], eip, eflags;
+    udword eax, ebx, ecx, edx, esp, edi, esp, ebp, eip, eflags;
 
-    uword seg[X86_REG_SEG_COUNT];
-
-    udword eip;
+    uword fs, gs, cs, ss, ds, es;
 
     reg_desc_table gdtr, ldtr, idtr;
 
@@ -39,66 +77,35 @@ typedef struct reg_file {
     mmu *mmu;
 } reg_file;
 
-C86_INLINE uword_t
-reg_file_ip_read(const reg_file *reg_file) {
-    return BIT_FIELD_READ(reg_file->eip, MASK_LOW_W);
-}
-
-C86_INLINE void
-reg_file_ip_write(reg_file *reg_file, uword val) {
-    BIT_FIELD_WRITE(reg_file->eip, MASK_LOW_W, val);
-}
-
-C86_INLINE uword_t
-reg_file_flags_read(const reg_file *reg_file) {
- return BIT_FIELD_READ(reg_file->eflags, MASK_LOW_W);
-}
-
-C86_INLINE void
-reg_file_flags_write(reg_file *reg_file, uword val) {
-    BIT_FIELD_WRITE(reg_file->eflags, MASK_LOW_W, val);
-}
-
 C86_INLINE ubyte_t
-reg_file_gen_read_b(const reg_file *reg_file, const uint8 reg) {
-    udword mask = reg & BIT(2) ? MASK_LOW_B : MASK_HIGH_B;
-    return BIT_FIELD_READ(reg_file->gen[reg & ~BIT(2)], mask);
-}
-
-C86_INLINE uword_t
-reg_file_gen_read_w(const reg_file *reg_file, const uint8 reg) {
-    return BIT_FIELD_READ(reg_file->gen[reg], MASK_LOW_W);
-}
-
-C86_INLINE udword_t
-reg_file_gen_read_dw(const reg_file *reg_file, const uint8 reg) {
-    return reg_file->gen[reg];
-}
-
-C86_INLINE void
-reg_file_gen_write_b(reg_file *reg_file, const uint8 reg, ubyte val) {
-    udword mask = reg & BIT(2) ? MASK_LOW_B : MASK_HIGH_B;
-    BIT_FIELD_WRITE(reg_file->gen[reg & ~BIT(2)], mask, val);
+reg_file_read_b(const reg_file *reg_file, const reg reg) {
+    switch (reg) {
+        case REG_AL: return BIT_FIELD_READ(reg_file->eax, MASK_LOW_B);
+        case REG_AH: return BIT_FIELD_READ(reg_file->eax, MASK_HIGH_B);
+        case REG_BL: return BIT_FIELD_READ(reg_file->ebx, MASK_LOW_B);
+        case REG_BH: return BIT_FIELD_READ(reg_file->ebx, MASK_HIGH_B);
+        case REG_CL: return BIT_FIELD_READ(reg_file->ecx, MASK_LOW_B);
+        case REG_CH: return BIT_FIELD_READ(reg_file->ecx, MASK_HIGH_B);
+        case REG_DL: return BIT_FIELD_READ(reg_file->edx, MASK_LOW_B);
+        case REG_DH: return BIT_FIELD_READ(reg_file->edx, MASK_HIGH_B);
+        case REG_NULL: return 0;
+        default: assert(false);
+    }
 }
 
 C86_INLINE void
-reg_file_gen_write_w(reg_file *reg_file, const uint8 reg, uword val) {
-    BIT_FIELD_WRITE(reg_file->gen[reg], MASK_LOW_W, val);
-}
-
-C86_INLINE void
-reg_file_gen_write_dw(reg_file *reg_file, const uint8 reg, udword val) {
-    reg_file->gen[reg] = val;
-}
-
-C86_INLINE uword_t
-reg_file_seg_read(reg_file *reg_file, const uint8 reg) {
-    return reg_file->seg[reg];
-}
-
-C86_INLINE void
-reg_file_seg_write(reg_file *reg_file, const uint8 reg, uword val) {
-    reg_file->seg[reg] = val;
+reg_file_write_b(reg_file *reg_file, const reg reg, const val) {
+    switch (reg) {
+        case REG_AL: BIT_FIELD_WRITE(reg_file->eax, MASK_LOW_B, val);
+        case REG_AH: BIT_FIELD_WRITE(reg_file->eax, MASK_HIGH_B, val);
+        case REG_BL: BIT_FIELD_WRITE(reg_file->ebx, MASK_LOW_B, val);
+        case REG_BH: BIT_FIELD_WRITE(reg_file->ebx, MASK_HIGH_B, val);
+        case REG_CL: BIT_FIELD_WRITE(reg_file->ecx, MASK_LOW_B, val);
+        case REG_CH: BIT_FIELD_WRITE(reg_file->ecx, MASK_HIGH_B, val);
+        case REG_DL: BIT_FIELD_WRITE(reg_file->edx, MASK_LOW_B, val);
+        case REG_DH: BIT_FIELD_WRITE(reg_file->edx, MASK_HIGH_B, val);
+        default: assert(false);
+    }
 }
 
 C86_INLINE bool
