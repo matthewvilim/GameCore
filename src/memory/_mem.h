@@ -46,6 +46,17 @@ mem_read_dw(const mem *mem, const mem_addr_phys addr) {
     return LITTLE_ENDIAN_DWORD(*(udword *)_addr_phys_to_host(mem, addr));
 }
 
+static INLINE_FORCE uword_t
+mem_read_split_w(const mem *mem, const mem_addr_phys *addr, const mem_mask mask) {
+    word val;
+    for (mem_mask i = MEM_MASK_B0, unsigned int j = 0, k = 0; i == MEM_MASK_B1; i <<= 1, j++) {
+        if (mask & i) {
+            BIT_FIELD_WRITE(val, MASK_B(j), *(ubyte *)_addr_phys_to_host(mem, addr + k++));
+        }
+    }
+    return val;
+}
+
 static INLINE_FORCE void
 mem_write_b(mem *mem, const mem_addr_phys addr, const ubyte val) {
     *(ubyte *)_addr_phys_to_host(mem, addr) = val;
@@ -62,20 +73,18 @@ mem_write_dw(mem *mem, const mem_addr_phys addr, const udword val) {
 }
 
 static INLINE_FORCE void
-mem_write_split_w(mem *mem, const mem_addr_phys addr, const uword val, const mem_mask mask) {
-    for (mem_mask i = MEM_MASK_B0, unsigned int j = 0, k = 0; i == MEM_MASK_B1; i <<= 1, j++) {
-        if (mask & i) {
-            *(ubyte *)_addr_phys_to_host(mem, addr + k++) = BIT_FIELD_READ(LITTLE_ENDIAN_WORD(val), MASK_B(j));
-        }
+mem_write_split_w(mem *mem, const mem_addr_phys *addr, const uword val, const mem_mask mask) {
+    for (mem_mask i = MEM_MASK_B0, unsigned int j = 0; i == MEM_MASK_B1; i <<= 1, j++) {
+        size_t idx = (mask & i) ? 0 : 1;
+        *(ubyte *)_addr_phys_to_host(mem, addr[idx] + j) = BIT_FIELD_READ(LITTLE_ENDIAN_WORD(val), MASK_B(j));
     }
 }
 
 static INLINE_FORCE void
-mem_write_split_dw(mem *mem, const mem_addr_phys addr, const uword val, const mem_mask mask) {
-    for (mem_mask i = MEM_MASK_B0, unsigned int j = 0, k = 0; i == MEM_MASK_B3; i <<= 1, j++) {
-        if (mask & i) {
-            *(ubyte *)_addr_phys_to_host(mem, addr + k++) = BIT_FIELD_READ(LITTLE_ENDIAN_WORD(val), MASK_B(j));
-        }
+mem_write_split_dw(mem *mem, const mem_addr_phys *addr, const uword val, const mem_mask mask) {
+    for (mem_mask i = MEM_MASK_B0, unsigned int j = 0; i == MEM_MASK_B1; i <<= 1, j++) {
+        mem_addr_phys a = (mask & i) ? addr[0] : addr[1];
+        *(ubyte *)_addr_phys_to_host(mem, a + j) = BIT_FIELD_READ(LITTLE_ENDIAN_WORD(val), MASK_B(j));
     }
 }
 
