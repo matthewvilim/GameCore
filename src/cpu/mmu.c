@@ -7,6 +7,70 @@
 #define MASK_TLB_INDEX      MASK_RANGE(TLB_SIZE_LOG2 + PAGE_SIZE_LOG2 - 1, PAGE_SIZE_LOG2)
 #define MASK_TLB_TAG        MASK_RANGE(X86_MEM_PHYS_BUS_SIZE_80386 - 1, TLB_SIZE_LOG2 + PAGE_SIZE_LOG2)
 
+typedef struct seg_desc_cache {
+    bool dirty;
+    addr_lin base;
+    udword limit;
+    uint8 type, s, dpl, p, avl, db;
+} seg_desc_cache;
+
+struct mmu {
+    mem *mem;
+
+    bool protected, paged;
+    seg_desc_cache seg[6];
+
+    struct tlb {
+        tlb_entry *entries;
+    };
+};
+
+INLINE_FORCE bool
+mmu_protected(mmu *mmu) {
+    return mmu0->protected;
+}
+
+INLINE_FORCE void
+mmu_cache_protected(mmu *mmu, reg_file *reg_file) {
+    mmu->protected = reg_file_pe_enabled(reg_file) && !reg_file_vm_enabled(reg_file);
+}
+
+INLINE_FORCE void
+mmu_cache_paged(mmu *mmu, reg_file *reg_file) {
+    mmu->paged = (reg_file->cr0 & X86_EFLAGS_MASK_PG) != 0;
+}
+
+INLINE_FORCE addr_lin_t
+mmu_addr_log_to_lin(mmu *mmu, addr_log log) {
+    seg_desc_cache *cache = mmu->seg + log.seg;
+    if (log.offset < cache->limit) {
+        return cache->base + log.offset;
+    } else {
+        // TODO: do exception
+    }
+}
+
+INLINE_FORCE addr_phys_t
+mmu_addr_lin_to_phys(mmu *mmu, addr_lin lin) {
+    if (mmu->paged) {
+        // TODO: implement paging
+    } else {
+        return lin;
+    }
+}
+
+INLINE_FORCE ubyte_t
+mmu_addr_log_read_b(mmu *mmu, addr_log log) {
+    addr_lin lin = mmu_addr_log_to_lin(mmu, log);
+    return mmu_addr_lin_read_b(mmu, lin);
+}
+
+INLINE_FORCE ubyte_t
+mmu_addr_lin_read_b(mmu *mmu, addr_lin lin) {
+    addr_phys phys = mmu_addr_lin_to_phys(mmu, lin);
+    return mem_addr_phys_read_b(mmu->mem, phys)
+}
+
 gc_error_t
 mmu_init(mmu *mmu, mem *mem) {
     mmu->mem = mem;

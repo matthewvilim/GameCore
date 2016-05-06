@@ -7,7 +7,7 @@
 #ifndef MMU_H
 #define MMU_H
 
-#include "cpu.h"
+typedef struct mmu mmu;
 
 typedef dword mmu_addr_log;
 typedef dword mmu_addr_lin;
