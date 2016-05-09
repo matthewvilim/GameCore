@@ -52,36 +52,42 @@ typedef struct _op_info {
     };
 } _op_info;
 
-typedef struct _operand {
-    operand_handler handler;
-    union {
-        uint8 r;
-        struct m {
-            uint8 base : 3;
-            uint8 index : 3;
-            uint8 scale : 2;
-            enum disp {
-                DISP_NONE,
-                DISP_BYTE,
-                DISP_WORD,
-                DISP_DWORD
-            } : 2;
-        };
-    };
-    uint8 reg;
-} _operand;
+enum _disp {
+    DISP_NONE,
+    DISP_BYTE,
+    DISP_WORD,
+    DISP_DWORD
+};
 
-typedef struct _sib_info {
-    _operand operand;
-} _sib_info;
+struct _operand {
 
-typedef struct _modrm_info {
+};
+
+struct _modrm_info {
     bool sib;
     union {
         _sib_info *sib_info;
-        _operand operand;
+        struct {
+            bool rm;
+            union {
+                reg_file_gen r;
+                struct m {
+                    reg_file_gen base;
+                    reg_file_gen index;
+                    _disp disp;
+                };
+            };
+            reg_file_gen reg;
+        };
     };
 } _modrm_info;
+
+typedef struct _sib_info {
+    reg_file_gen base;
+    reg_file_gen index;
+    uint8_t scale : 2;
+    _disp disp;
+} _sib_info;
 
 typedef struct _decode {
     ubyte *buf;
