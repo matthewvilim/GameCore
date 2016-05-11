@@ -63,12 +63,29 @@ struct _operand {
 
 };
 
+enum addr_mode {
+    ADDR_DISP,
+    ADDR_BASE_INDEX_SCALE_DISP;
+};
+
 struct _modrm_info {
-    bool sib;
+    enum sib {
+        SIB_YES,
+        SIB_NO
+    };
     union {
-        _sib_info *sib_info;
+        enum sib {
+            SIB_0,
+            SIB_1,
+            SIB_2,
+            SIB_3
+        };
         struct {
-            bool rm;
+            enum addr_mode mode;
+            enum rm {
+                RM_REG,
+                RM_MEM
+            };
             union {
                 reg_file_gen r;
                 struct m {
@@ -80,9 +97,10 @@ struct _modrm_info {
             reg_file_gen reg;
         };
     };
-} _modrm_info;
+};
 
 typedef struct _sib_info {
+    enum addr_mode mode;
     reg_file_gen base;
     reg_file_gen index;
     uint8_t scale : 2;
