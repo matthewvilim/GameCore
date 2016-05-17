@@ -16,44 +16,25 @@
 
 struct gen_info {
     char *name;
-    enum index {
-        GEN_EAX,
-        GEN_EBX,
-        GEN_ECX,
-        GEN_EDX,
-        GEN_ESP,
-        GEN_EBP,
-        GEN_ESI,
-        GEN_EDI,
-        GEN_COUNT
-    };
+    reg_file_gen index;
     udword mask;
 };
 
 struct seg_info {
     char *name;
-    enum index {
-        SEG_CS,
-        SEG_DS,
-        SEG_ES,
-        SEG_SS,
-        SEG_FS,
-        SEG_GS,
-        SEG_COUNT
-    };
 };
 
 static const gen_info _gen_info_table[] {
-    [REG_FILE_GEN_EAX] = { .name = "eax", .index = GEN_EAX },
-    [REG_FILE_GEN_EBX] = { .name = "ebx", .index = GEN_EBX },
-    [REG_FILE_GEN_ECX] = { .name = "ecx", .index = GEN_ECX },
-    [REG_FILE_GEN_EDX] = { .name = "edx", .index = GEN_EDX },
-    [REG_FILE_GEN_ESP] = { .name = "esp", .index = GEN_ESP },
-    [REG_FILE_GEN_EBP] = { .name = "ebp", .index = GEN_EBP },
-    [REG_FILE_GEN_ESI] = { .name = "esi", .index = GEN_ESI },
-    [REG_FILE_GEN_EDI] = { .name = "edi", .index = GEN_EDI },
+    [REG_FILE_GEN_EAX] = { .name = "eax" },
+    [REG_FILE_GEN_EBX] = { .name = "ebx" },
+    [REG_FILE_GEN_ECX] = { .name = "ecx" },
+    [REG_FILE_GEN_EDX] = { .name = "edx" },
+    [REG_FILE_GEN_ESP] = { .name = "esp" },
+    [REG_FILE_GEN_EBP] = { .name = "ebp" },
+    [REG_FILE_GEN_ESI] = { .name = "esi" },
+    [REG_FILE_GEN_EDI] = { .name = "edi", .index = REG_FILE_GEN_EDI },
 
-    [REG_FILE_GEN_AX] = { .name = "ax", .index = GEN_EAX, .mask = MASK_LOW_W },
+    [REG_FILE_GEN_AX] = { .name = "ax", .index = GEN_EAX},
     [REG_FILE_GEN_BX] = { .name = "bx", .index = GEN_EBX, .mask = MASK_LOW_W },
     [REG_FILE_GEN_CX] = { .name = "cx", .index = GEN_ECX, .mask = MASK_LOW_W },
     [REG_FILE_GEN_DX] = { .name = "dx", .index = GEN_EDX, .mask = MASK_LOW_W },
@@ -63,13 +44,13 @@ static const gen_info _gen_info_table[] {
     [REG_FILE_GEN_DI] = { .name = "di", .index = GEN_EDI, .mask = MASK_LOW_W },
 
     [REG_FILE_GEN_AL] = { .name = "al", .index = GEN_EAX, .mask = MASK_LOW_B },
-    [REG_FILE_GEN_AH] = { .name = "ah", .index = GEN_EAX, .mask = MASK_LOW_B },
+    [REG_FILE_GEN_AH] = { .name = "ah", .index = GEN_EAX, .mask = MASK_HIGH_B },
     [REG_FILE_GEN_BL] = { .name = "bl", .index = GEN_EBX, .mask = MASK_LOW_B },
-    [REG_FILE_GEN_BH] = { .name = "bh", .index = GEN_EBX, .mask = MASK_LOW_B },
+    [REG_FILE_GEN_BH] = { .name = "bh", .index = GEN_EBX, .mask = MASK_HIGH_B },
     [REG_FILE_GEN_CL] = { .name = "cl", .index = GEN_ECX, .mask = MASK_LOW_B },
-    [REG_FILE_GEN_CH] = { .name = "ch", .index = GEN_ECX, .mask = MASK_LOW_B },
+    [REG_FILE_GEN_CH] = { .name = "ch", .index = GEN_ECX, .mask = MASK_HIGH_B },
     [REG_FILE_GEN_DL] = { .name = "dl", .index = GEN_EDX, .mask = MASK_LOW_B },
-    [REG_FILE_GEN_DH] = { .name = "dh", .index = GEN_EDX, .mask = MASK_LOW_B }
+    [REG_FILE_GEN_DH] = { .name = "dh", .index = GEN_EDX, .mask = MASK_HIGH_B }
 };
 
 struct reg_file {
@@ -97,28 +78,24 @@ reg_file_write_gen_b(reg_file *rf, const reg r, const ubyte val) {
     BIT_FIELD_WRITE(rf->gen[i->index], i->mask, val);
 }
 
-ubyte
+uword
 reg_file_read_gen_w(const reg_file *rf, const reg r) {
-    const struct gen_info *i = _gen_info_table + r;
-    return BIT_FIELD_READ(rf->gen[i->index], i->mask);
+    return BIT_FIELD_READ(rf->gen[r], MASK_LOW_W);
 }
 
 void
 reg_file_write_gen_w(reg_file *rf, const reg r, const uword val) {
-    const struct gen_info *i = _gen_info_table + r;
-    BIT_FIELD_WRITE(rf->gen[i->index], i->mask, val);
+    BIT_FIELD_WRITE(rf->gen[r], MASK_LOW_W, val);
 }
 
-ubyte
+udword
 reg_file_read_gen_dw(const reg_file *rf, const reg r) {
-    const struct gen_info *i = _gen_info_table + r;
-    return rf->gen[i->index];
+    return rf->gen[r];
 }
 
 void
 reg_file_write_gen_dw(reg_file *rf, const reg r, const udword val) {
-    const struct gen_info *i = _gen_info_table + r;
-    rf->gen[i->index] = val;
+    rf->gen[r = val;
 }
 
 uword_t
