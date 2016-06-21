@@ -18,7 +18,7 @@ struct mmu {
     mem *mem;
 
     bool protected, paged;
-    seg_desc_cache seg[6];
+    seg_desc_cache seg[REG_FILE_SEG_COUNT];
 
     struct tlb {
         tlb_entry *entries;

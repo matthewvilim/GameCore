@@ -24,10 +24,10 @@
 #define MASK_RANGE(high, low)    MASK_LEN((high) - (low) + 1, low)
 // miscellaneous tricks
 #define LOW_BIT(val)        ((val) & -(val))
-#define LOW_BIT_IDX(val)    ((val) != 0 ? ((val) / LOW_BIT(val)) : 0)
+#define LOW_BIT_INDEX(val)    ((val) != 0 ? ((val) / LOW_BIT(val)) : 0)
 // read/write masks
-#define BIT_FIELD_READ(in, mask)         (((in) & (mask)) >> LOW_BIT_IDX(mask))
-#define BIT_FIELD_WRITE(in, mask, val)    (((in) & ~(mask)) | ((val) << LOW_BIT_IDX(mask)))
+#define BIT_FIELD_READ(in, mask)         (((in) & (mask)) >> LOW_BIT_INDEX(mask))
+#define BIT_FIELD_WRITE(in, mask, val)    (((in) & ~(mask)) | ((val) << LOW_BIT_INDEX(mask)))
 
 /********************
  * COMMON BIT MASKS *
