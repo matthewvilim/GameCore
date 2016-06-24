@@ -19,56 +19,50 @@
  * BIT MANIPULATION MACROS *
  **************************/
 // create masks
-#define BIT(i)                   (1 << i)
+#define BIT(i)               (1 << (i))
+#define BIT_COUNT(val)       (sizeof(val) << 3)
+#define BIT_SET_LOW(val)     (BIT_COUNT(val) - 1 - INTRINSIC_CLZ(val))
+#define BIT_SET_HIGH(val)    (BIT_COUNT(val) - 1 - INTRINSIC_CTZ(val))
+
 #define MASK_LEN(len, low)       ((BIT(len) - 1) << (low))
 #define MASK_RANGE(high, low)    MASK_LEN((high) - (low) + 1, low)
-// miscellaneous tricks
-#define LOW_BIT(val)        ((val) & -(val))
-#define LOW_BIT_INDEX(val)    ((val) != 0 ? ((val) / LOW_BIT(val)) : 0)
 // read/write masks
-#define BIT_FIELD_READ(in, mask)         (((in) & (mask)) >> LOW_BIT_INDEX(mask))
-#define BIT_FIELD_WRITE(in, mask, val)    (((in) & ~(mask)) | ((val) << LOW_BIT_INDEX(mask)))
+#define BIT_FIELD_READ(in, mask)          (((in) & (mask)) >> BIT_SET_LOW(mask))
+#define BIT_FIELD_WRITE(in, mask, val)    (((in) & ~(mask)) | ((val) << BIT_SET_LOW(mask)))
+
+# define BYTE_SWAP32(val) INTRINSIC_BYTE_SWAP32(val)
+# define BYTE_SWAP16(val) INTRINSIC_BYTE_SWAP16(val)
 
 /********************
  * COMMON BIT MASKS *
  ********************/
- #define MASK_B(i)     (MASK_RANGE(7,0) << (8 * i))
- #define MASK_W(i)     (MASK_RANGE(15,0) << (16 * i))
- #define MAKS_DW        MASK_RANGE(31, 0)
- #define MASK_LOW_B     MASK_B(0)
- #define MASK_HIGH_B    MASK_B(1)
- #define MASK_LOW_W     MASK_W(0)
- #define MASK_HIGH_W    MASK_W(1)
-
-#if __has_builtin(__builtin_bswap32)
-# define BYTE_SWAP32(val) __builtin_bswap32(val)
-#else
-# define BYTE_SWAP32(val) ((((val) & MASK_RANGE(31, 24)) >> 24) \
-                         | (((val) & MASK_RANGE(23, 16)) >> 8)  \
-                         | (((val) & MASK_RANGE(15, 8))  << 8)  \
-                         | (((val) & MASK_RANGE(7, 0))   << 24))
-#endif
-
-#if __has_builtin(__builtin_bswap16)
-# define BYTE_SWAP16(val) __builtin_bswap16(val)
-#else
-# define BYTE_SWAP16(val) ((val >> 8) | (val << 8))
-#endif
+ #define MASK8(i)     (MASK_RANGE(7,0) << (8 * i))
+ #define MASK16(i)     (MASK_RANGE(15,0) << (16 * i))
+ #define MAKS32         MASK_RANGE(31, 0)
+ #define MASK_LOW8      MASK8(0)
+ #define MASK_HIGH8     MASK8(1)
+ #define MASK_LOW16     MASK16(0)
+ #define MASK_HIGH16    MASK16(1)
 
 #if HOST_LITTLE_ENDIAN
-# define LITTLE_ENDIAN_WORD(val)   (val)
-# define LITTLE_ENDIAN_DWORD(val)  (val)
+# define LITTLE_ENDIAN16(val)    (val)
+# define LITTLE_ENDIAN32(val)    (val)
 #else
-# define LITTLE_ENDIAN_WORD(val)    BYTE_SWAP16(val)
-# define LITTLE_ENDIAN_DWORD(val)   BYTE_SWAP32(val)
+# define LITTLE_ENDIAN16(val)    BYTE_SWAP16(val)
+# define LITTLE_ENDIAN32(val)    BYTE_SWAP32(val)
 #endif
 
-#define GBYTES_LOG2(n) (30 + (n))
-#define MBYTES_LOG2(n) (20 + (n))
-#define KBYTES_LOG2(n) (10 + (n))
+#define LOG2_CEILING(val)  ((val) ? BIT_SET_HIGH(val) + 1 : 0)
+#define LOG2_FLOOR(val)    ((val) ? BIT_SET_HIGH(val) : 0)
+#define POW2_CEILING(val)  BIT(LOG2_CEILING(val))
+#define POW2_FLOOR(val)    BIT(LOG2_FLOOR(val))
 
-#define MASK_GBYTES(n) MASK_RANGE(GBYTES_LOG2(n) - 1, 0)
-#define MASK_MBYTES(n) MASK_RANGE(MBYTES_LOG2(n) - 1, 0)
-#define MASK_KBYTES(n) MASK_RANGE(KBYTES_LOG2(n) - 1, 0)
+#define LOG2_GBYTES(n) (30 + (n))
+#define LOG2_MBYTES(n) (20 + (n))
+#define LOG2_KBYTES(n) (10 + (n))
+
+#define MASK_GBYTES(n) MASK_RANGE(LOG2_GBYTES(n) - 1, 0)
+#define MASK_MBYTES(n) MASK_RANGE(LOG2_MBYTES(n) - 1, 0)
+#define MASK_KBYTES(n) MASK_RANGE(LOG2_KBYTES(n) - 1, 0)
 
 #endif

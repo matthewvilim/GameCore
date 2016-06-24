@@ -8,6 +8,30 @@
 # define __has_builtin(feature) 0
 #endif
 
+#if __has_builtin(__builtin_bswap32)
+# define INTRINSIC_BYTE_SWAP32(val) __builtin_bswap32(val)
+#else
+# warn instrinc byte swap 32 undefined
+#endif
+
+#if __has_builtin(__builtin_bswap16)
+# define INTRINSIC_BYTE_SWAP16(val) __builtin_bswap16(val)
+#else
+# warn instrinc byte swap 16 undefined
+#endif
+
+#if __has_builtin(__builtin_clz)
+# define INTRINSIC_CLZ(val) __builtin_clz(val)
+#else
+# error low bit instrinsic must be defined
+#endif
+
+#if __has_builtin(__builtin_ctz)
+# define INTRINSIC_CTZ(val) __builtin_ctz(val)
+#else
+# error low bit instrinsic must be defined
+#endif
+
 #ifdef __LITTLE_ENDIAN__
 # define HOST_LITTLE_ENDIAN     __LITTLE_ENDIAN__
 #else
