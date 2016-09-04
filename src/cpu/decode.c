@@ -1,5 +1,48 @@
 #include "decode.h"
 
+enum size_attribute {
+    SIZE_ATTRIBUTE_SEG_DEFAULT = 1 << 0,
+    SIZE_ATTRIBUTE_OPERAND_PREFIX = 1 << 1,
+    SIZE_ATTRIBUTE_ADDRESS_PREFIX = 1 << 2
+};
+
+enum operand_size {
+    OPERAND_SIZE16,
+    OPERAND_SIZE32
+};
+
+enum address_size {
+    ADDRESS_SIZE16,
+    ADDRESS_SIZE32
+};
+
+struct decode {
+    operand_size op_size;
+    address_size addr_size;
+};
+
+enum operand_size _operand_size_table[] = {
+    []                                                                                           = OPERAND_SIZE16,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT]                                                                 = OPERAND_SIZE32,
+    [                             SIZE_ATTRIBUTE_OPERAND_PREFIX]                                 = OPERAND_SIZE32,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT | SIZE_ATTRIBUTE_OPERAND_PREFIX]                                 = OPERAND_SIZE16,
+    [                                                             SIZE_ATTRIBUTE_ADDRESS_PREFIX] = OPERAND_SIZE16,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT |                                 SIZE_ATTRIBUTE_ADDRESS_PREFIX] = OPERAND_SIZE32,
+    [                             SIZE_ATTRIBUTE_OPERAND_PREFIX | SIZE_ATTRIBUTE_ADDRESS_PREFIX] = OPERAND_SIZE32,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT | SIZE_ATTRIBUTE_OPERAND_PREFIX | SIZE_ATTRIBUTE_ADDRESS_PREFIX] = OPERAND_SIZE16
+}
+
+enum address_size _operand_size_table[] = {
+    []                                                                                           = ADDRESS_SIZE16,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT]                                                                 = ADDRESS_SIZE32,
+    [                             SIZE_ATTRIBUTE_OPERAND_PREFIX]                                 = ADDRESS_SIZE16,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT | SIZE_ATTRIBUTE_OPERAND_PREFIX]                                 = ADDRESS_SIZE32,
+    [                                                             SIZE_ATTRIBUTE_ADDRESS_PREFIX] = ADDRESS_SIZE32,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT |                                 SIZE_ATTRIBUTE_ADDRESS_PREFIX] = ADDRESS_SIZE16,
+    [                             SIZE_ATTRIBUTE_OPERAND_PREFIX | SIZE_ATTRIBUTE_ADDRESS_PREFIX] = ADDRESS_SIZE32,
+    [SIZE_ATTRIBUTE_SEG_DEFAULT | SIZE_ATTRIBUTE_OPERAND_PREFIX | SIZE_ATTRIBUTE_ADDRESS_PREFIX] = ADDRESS_SIZE16
+}
+
 typedef enum _op {
     OP_ADD,
     OP_XOR

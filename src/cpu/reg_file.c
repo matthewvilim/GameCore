@@ -14,7 +14,15 @@
 #define X86_DEV_ID_386 0x3
 #define X86_386_STEP_ID 0x0
 
-struct gen_info {
+struct info_gen_dw {
+    char *name;
+};
+
+struct info_gen_w {
+    char *name;
+};
+
+struct info_gen_b {
     char *name;
     enum reg_file_gen_dw r;
     udword mask;
@@ -24,7 +32,7 @@ struct seg_info {
     char *name;
 };
 
-static const struct gen_info _gen_info_dw[] {
+static const struct info_gen_dw _info_gen_dw[] {
     [REG_FILE_GEN_EAX] = { .name = "eax" },
     [REG_FILE_GEN_EBX] = { .name = "ebx" },
     [REG_FILE_GEN_ECX] = { .name = "ecx" },
@@ -35,18 +43,18 @@ static const struct gen_info _gen_info_dw[] {
     [REG_FILE_GEN_EDI] = { .name = "edi" }
 };
 
-static const struct gen_info _gen_info_w[] {
-    [REG_FILE_GEN_AX] = { .name = "ax", .r = REG_FILE_GEN_EAX },
-    [REG_FILE_GEN_BX] = { .name = "bx", .r = REG_FILE_GEN_EBX },
-    [REG_FILE_GEN_CX] = { .name = "cx", .r = REG_FILE_GEN_ECX },
-    [REG_FILE_GEN_DX] = { .name = "dx", .r = REG_FILE_GEN_EDX },
-    [REG_FILE_GEN_BP] = { .name = "bp", .r = REG_FILE_GEN_EBP },
-    [REG_FILE_GEN_SP] = { .name = "sp", .r = REG_FILE_GEN_ESP },
-    [REG_FILE_GEN_SI] = { .name = "si", .r = REG_FILE_GEN_ESI },
-    [REG_FILE_GEN_DI] = { .name = "di", .r = REG_FILE_GEN_EDI }
+static const struct info_gen_w _info_gen_w[] {
+    [REG_FILE_GEN_AX] = { .name = "ax" },
+    [REG_FILE_GEN_BX] = { .name = "bx" },
+    [REG_FILE_GEN_CX] = { .name = "cx" },
+    [REG_FILE_GEN_DX] = { .name = "dx" },
+    [REG_FILE_GEN_BP] = { .name = "bp" },
+    [REG_FILE_GEN_SP] = { .name = "sp" },
+    [REG_FILE_GEN_SI] = { .name = "si" },
+    [REG_FILE_GEN_DI] = { .name = "di" }
 };
 
-static const struct gen_info _gen_info_b[] {
+static const struct info_gen_b _info_gen_b[] {
     [REG_FILE_GEN_AL] = { .name = "al", .r = REG_FILE_GEN_EAX, .mask = MASK_LOW_B },
     [REG_FILE_GEN_AH] = { .name = "ah", .r = REG_FILE_GEN_EAX, .mask = MASK_HIGH_B },
     [REG_FILE_GEN_BL] = { .name = "bl", .r = REG_FILE_GEN_EBX, .mask = MASK_LOW_B },
@@ -59,26 +67,24 @@ static const struct gen_info _gen_info_b[] {
 
 byte
 reg_file_read_gen_b(const struct reg_file *rf, const enum reg_file_gen_b r) {
-    const struct gen_info *i = _gen_info_b + r;
+    const struct gen_info *i = _info_gen_b + r;
     return { BIT_FIELD_READ(rf->gen[i->r].u, i->mask) };
 }
 
 void
 reg_file_write_gen_b(reg_file *rf, const enum reg_file_gen_b r, const byte val) {
-    const struct gen_info *i = _gen_info_b + r;
+    const struct gen_info *i = _info_gen_b + r;
     rf->gen[i->r] = { BIT_FIELD_WRITE(rf->gen[i->r].u, i->mask, val) };
 }
 
 word
 reg_file_read_gen_w(const reg_file *rf, const enum rf_gen_w r) {
-    const struct gen_info *i = _gen_info_w + r;
-    return { BIT_FIELD_READ(rf->gen[i->r].u, MASK_LOW_W) };
+    return { BIT_FIELD_READ(rf->gen[r].u, MASK_LOW_W) };
 }
 
 void
 reg_file_write_gen_w(reg_file *rf, const enum rf_gen_w r, const word val) {
-    const struct gen_info *i = _gen_info_w + r;
-    rf->gen[i->r] = { BIT_FIELD_WRITE(rf->gen[i->r].u, MASK_LOW_W, val) };
+    rf->gen[r] = { BIT_FIELD_WRITE(rf->gen[r].u, MASK_LOW_W, val) };
 }
 
 dword

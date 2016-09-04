@@ -7,6 +7,9 @@
 #ifndef REG_FILE_H
 #define REG_FILE_H
 
+#define REG_FILE_GEN_COUNT 8
+#define REG_FILE_SEG_COUNT 6
+
 typedef reg_file reg_file;
 
 enum reg_file_gen_dw {
@@ -17,8 +20,7 @@ enum reg_file_gen_dw {
     REG_FILE_GEN_EBP,
     REG_FILE_GEN_ESP,
     REG_FILE_GEN_ESI,
-    REG_FILE_GEN_EDI,
-    REG_FILE_GEN_COUNT
+    REG_FILE_GEN_EDI
 };
 
 enum reg_file_gen_w {
@@ -49,8 +51,7 @@ enum reg_file_seg {
     REG_FILE_SEG_ES,
     REG_FILE_SEG_SS,
     REG_FILE_SEG_FS,
-    REG_FILE_SEG_GS,
-    REG_FILE_SEG_COUNT
+    REG_FILE_SEG_GS
 };
 
 enum reg_file_cr {
@@ -73,15 +74,9 @@ struct reg_desc_table {
 
 struct reg_file {
     dword gen[REG_FILE_GEN_COUNT], eip, eflags;
-
-    word seg[REG_FILE_SEG_COUNT];
-
-    dword eip;
-
+    word seg[REG_FILE_SEG_COUNT], cr0, cr1, cr2, cr3;
     reg_desc_table gdtr, ldtr, idtr;
-
     reg_task tr;
-    uword cr0, cr1, cr2, cr3;
 };
 
 void reg_file_init(reg_file *reg_file);
