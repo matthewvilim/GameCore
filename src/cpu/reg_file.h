@@ -72,9 +72,19 @@ struct reg_desc_table {
     uword limit;
 };
 
+struct reg_seg_desc {
+    addr_lin base;
+    word limit;
+    uint8 type, s, dpl, p, avl, db;
+};
+
 struct reg_file {
     dword gen[REG_FILE_GEN_COUNT], eip, eflags;
-    word seg[REG_FILE_SEG_COUNT], cr0, cr1, cr2, cr3;
+    word cr0, cr1, cr2, cr3;
+    struct seg[REG_FILE_SEG_COUNT] {
+        word selector;
+        reg_seg_desc desc;
+    };
     reg_desc_table gdtr, ldtr, idtr;
     reg_task tr;
 };

@@ -7,18 +7,10 @@
 #define MASK_TLB_INDEX      MASK_RANGE(TLB_SIZE_LOG2 + PAGE_SIZE_LOG2 - 1, PAGE_SIZE_LOG2)
 #define MASK_TLB_TAG        MASK_RANGE(X86_MEM_PHYS_BUS_SIZE_80386 - 1, TLB_SIZE_LOG2 + PAGE_SIZE_LOG2)
 
-typedef struct seg_desc_cache {
-    bool dirty;
-    addr_lin base;
-    udword limit;
-    uint8 type, s, dpl, p, avl, db;
-} seg_desc_cache;
-
 struct mmu {
     mem *mem;
 
     bool protected, paged;
-    seg_desc_cache seg[REG_FILE_SEG_COUNT];
 
     struct tlb {
         tlb_entry *entries;

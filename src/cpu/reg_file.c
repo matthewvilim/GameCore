@@ -32,7 +32,7 @@ struct seg_info {
     char *name;
 };
 
-static const struct info_gen_dw _info_gen_dw[] {
+static const struct info_gen_dw _info_gen_dw[] = {
     [REG_FILE_GEN_EAX] = { .name = "eax" },
     [REG_FILE_GEN_EBX] = { .name = "ebx" },
     [REG_FILE_GEN_ECX] = { .name = "ecx" },
@@ -43,7 +43,7 @@ static const struct info_gen_dw _info_gen_dw[] {
     [REG_FILE_GEN_EDI] = { .name = "edi" }
 };
 
-static const struct info_gen_w _info_gen_w[] {
+static const struct info_gen_w _info_gen_w[] = {
     [REG_FILE_GEN_AX] = { .name = "ax" },
     [REG_FILE_GEN_BX] = { .name = "bx" },
     [REG_FILE_GEN_CX] = { .name = "cx" },
@@ -54,7 +54,7 @@ static const struct info_gen_w _info_gen_w[] {
     [REG_FILE_GEN_DI] = { .name = "di" }
 };
 
-static const struct info_gen_b _info_gen_b[] {
+static const struct info_gen_b _info_gen_b[] = {
     [REG_FILE_GEN_AL] = { .name = "al", .r = REG_FILE_GEN_EAX, .mask = MASK_LOW_B },
     [REG_FILE_GEN_AH] = { .name = "ah", .r = REG_FILE_GEN_EAX, .mask = MASK_HIGH_B },
     [REG_FILE_GEN_BL] = { .name = "bl", .r = REG_FILE_GEN_EBX, .mask = MASK_LOW_B },
@@ -63,6 +63,15 @@ static const struct info_gen_b _info_gen_b[] {
     [REG_FILE_GEN_CH] = { .name = "ch", .r = REG_FILE_GEN_ECX, .mask = MASK_HIGH_B },
     [REG_FILE_GEN_DL] = { .name = "dl", .r = REG_FILE_GEN_EDX, .mask = MASK_LOW_B },
     [REG_FILE_GEN_DH] = { .name = "dh", .r = REG_FILE_GEN_EDX, .mask = MASK_HIGH_B }
+};
+
+static const struct seg_info _info_seg[] = {
+    [REG_FILE_SEG_CS] = { .name = "cs" },
+    [REG_FILE_SEG_DS] = { .name = "ds" },
+    [REG_FILE_SEG_ES] = { .name = "es" },
+    [REG_FILE_SEG_SS] = { .name = "ss" },
+    [REG_FILE_SEG_FS] = { .name = "fs" },
+    [REG_FILE_SEG_GS] = { .name = "gs" }
 };
 
 byte
@@ -95,6 +104,26 @@ reg_file_read_gen_dw(const reg_file *rf, const enum rf_gen_dw r) {
 void
 reg_file_write_gen_dw(reg_file *rf, const enum rf_gen_dw r, const dword val) {
     rf->gen[r] = val;
+}
+
+word
+reg_file_read_seg(const struct reg_file *rf, const enum reg_file_seg r) {
+    return { rf->seg[r] };
+}
+
+void
+reg_file_write_seg(const struct reg_file *rf, const enum reg_file_seg r, const word val) {
+    rf->seg[r] = val;
+}
+
+seg_desc
+reg_file_read_seg_desc(const struct reg_file *rf, const enum reg_file_seg r) {
+    return rf->seg_desc[r];
+}
+
+void
+reg_file_write_seg(const struct reg_file *rf, const enum reg_file_seg r, const seg_desc val) {
+    rf->seg_desc[r] = val;
 }
 
 word
